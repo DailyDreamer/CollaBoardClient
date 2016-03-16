@@ -1,7 +1,6 @@
 <template>
   <div id="board">
-    <canvas id="c"></canvas>
-    <button id="mode" v-on:click="changeMode(canvas)">Change Mode</button>
+    <fabric-canvas></fabric-canvas>
   </div>
 </template>
 
@@ -10,6 +9,7 @@ import fabric from 'fabric'
 import io from 'socket.io-client'
 import Config from '../Config.js'
 import CanvasEvents from './CanvasEvents.js'
+import FabricCanvas from './FabricCanvas.vue'
 
 export default {
   data() {
@@ -19,28 +19,20 @@ export default {
     }
   },
   methods: {
-    changeMode: (canvas) => {
-      canvas.isDrawingMode = !canvas.isDrawingMode;
-    }
+  },
+  components: {
+    'fabric-canvas': FabricCanvas,
   },
   ready() {
-    this.canvas = new fabric.Canvas('c', {isDrawingMode: true});
-
-    this.canvas.setDimensions({width: window.innerWidth, height:window.innerHeight});
-    this.canvas.setBackgroundColor('grey');
-    this.canvas.renderAll();
+    this.canvas = this.$children[0].canvas;
     this.socket = io(Config.server);
-    var canvasEvents = new CanvasEvents(this.canvas, this.socket, this.$route.params.rid);
+    this.socket.emit('join', this.$route.params.rid);
+    new CanvasEvents(this.canvas, this.socket);
   }
 }
 </script>
 <style>
 canvas {
   display: block;
-}
-#mode {
-  position: fixed;
-  top: 0;
-  right: 0;
 }
 </style>

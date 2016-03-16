@@ -1,7 +1,6 @@
 <template>
   <div id="wrapper">
     <div id="header">
-      <h1>{{ msg }}</h1>
     </div>
     <router-view></router-view>
   </div>
@@ -11,7 +10,6 @@
 export default {
   data () {
     return {
-      msg: 'Hello Vue!'
     }
   }
 }

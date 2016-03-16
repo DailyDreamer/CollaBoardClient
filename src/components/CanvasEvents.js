@@ -1,9 +1,7 @@
 import fabric from 'fabric'
 
 class CanvasEvents {
-  constructor(canvas, socket, rid) {
-    socket.emit('join', rid);
-
+  constructor(canvas, socket) {
     canvas.on('object:added', function(e) {
       var fabricObject = e.target;
       console.log('object:added');
@@ -24,7 +22,7 @@ class CanvasEvents {
         });
       });
     });
-    
+
     socket.on('note:added', function(msg) {
       var note = JSON.parse(msg);
       fabric.util.enlivenObjects(note.objects, function(fabricObjects) {
