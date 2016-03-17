@@ -1,7 +1,10 @@
 <template>
   <div id="note">
     <fabric-canvas></fabric-canvas>
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="send" v-on:click="send()">Send</button>
+    <div id="note-function">
+      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="send" v-on:click="send(canvas, socket)">Send</button>
+      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="clear" v-on:click="clear(canvas)">Clear</button>
+    </div>
   </div>
 </template>
 
@@ -10,6 +13,7 @@ import fabric from 'fabric'
 import io from 'socket.io-client'
 import Config from '../Config.js'
 import FabricCanvas from './FabricCanvas.vue'
+import Helper from './Helper.js'
 
 export default {
   data() {
@@ -22,10 +26,13 @@ export default {
     'fabric-canvas': FabricCanvas,
   },
   methods: {
-    send: function() {
+    send: (canvas, socket) => {
       //send whole canvas as a note
-      console.log(this.canvas._objects);
-      this.socket.emit('note:added', JSON.stringify(this.canvas));
+      canvas.uuid = Helper.genUUID();
+      socket.emit('note:added', Helper.genJSONString(canvas));
+    },
+    clear: (canvas) => {
+      canvas.clear();
     }
   },
   ready() {
@@ -39,7 +46,7 @@ export default {
 canvas {
   display: block;
 }
-#send {
+#note-function {
   position: fixed;
   bottom: 0;
   right: 0;

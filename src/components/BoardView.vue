@@ -8,7 +8,7 @@
 import fabric from 'fabric'
 import io from 'socket.io-client'
 import Config from '../Config.js'
-import CanvasEvents from './CanvasEvents.js'
+import canvasEvents from './CanvasEvents.js'
 import FabricCanvas from './FabricCanvas.vue'
 
 export default {
@@ -27,7 +27,7 @@ export default {
     this.canvas = this.$children[0].canvas;
     this.socket = io(Config.server);
     this.socket.emit('join', this.$route.params.rid);
-    new CanvasEvents(this.canvas, this.socket);
+    canvasEvents(this.canvas, this.socket);
   }
 }
 </script>
