@@ -2,8 +2,13 @@
   <div id="FabricCanvas">
     <canvas id="c"></canvas>
     <div id="canvas-funtion">
-      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="mode" v-on:click="changeMode(canvas)">Change Mode</button>
-      <input type="file" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="upload" v-on:change="upload(canvas)">
+      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="mode" v-on:click="changeMode(canvas)">mode_edit</button>
+      <div class="mdl-tooltip mdl-tooltip--right" for="mode">Select or write</div><br/>
+      <div class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon mdl-button--file">
+        <i class="material-icons">attach_file</i>
+        <input type="file" id="upload" v-on:change="upload(canvas)">
+      </div>
+      <div class="mdl-tooltip mdl-tooltip--right" for="upload">Write a note</div><br/>
     </div>
   </div>
 </template>
@@ -51,5 +56,13 @@ canvas {
   position: fixed;
   top: 0;
   right: 0;
+}
+.mdl-button--file input {
+  cursor: pointer;
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  z-index: 4;
 }
 </style>

@@ -2,8 +2,12 @@
   <div id="note">
     <fabric-canvas></fabric-canvas>
     <div id="note-function">
-      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="send" v-on:click="send(canvas, socket)">Send</button>
-      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="clear" v-on:click="clear(canvas)">Clear</button>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="send" v-on:click="send()">send</button>
+        <div class="mdl-tooltip mdl-tooltip--right" for="send">Send</div><br/>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="clear" v-on:click="clear()">clear</button>
+        <div class="mdl-tooltip mdl-tooltip--right" for="clear">Clear</div><br/>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="to-board" v-on:click="toBoard()">dashboard</button>
+        <div class="mdl-tooltip mdl-tooltip--right" for="to-board">Back to board</div><br/>
     </div>
   </div>
 </template>
@@ -26,13 +30,16 @@ export default {
     'fabric-canvas': FabricCanvas,
   },
   methods: {
-    send: (canvas, socket) => {
+    send: function() {
       //send whole canvas as a note
-      canvas.uuid = Helper.genUUID();
-      socket.emit('note:added', Helper.genJSONString(canvas));
+      this.canvas.uuid = Helper.genUUID();
+      this.socket.emit('note:added', Helper.genJSONString(this.canvas));
     },
-    clear: (canvas) => {
-      canvas.clear();
+    clear: function() {
+      this.canvas.clear();
+    },
+    toBoard: function() {
+      this.$route.router.go({ name: 'board', params: { rid: this.$route.params.rid }});
     }
   },
   ready() {

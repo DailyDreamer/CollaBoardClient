@@ -1,6 +1,10 @@
 <template>
   <div id="board">
     <fabric-canvas></fabric-canvas>
+    <div id="board-function">
+      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="to-note" v-on:click="toNote()">note_add</button>
+      <div class="mdl-tooltip mdl-tooltip--right" for="to-note">Write a note</div><br/>
+    </div>
   </div>
 </template>
 
@@ -19,6 +23,9 @@ export default {
     }
   },
   methods: {
+    toNote: function() {
+      this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
+    }
   },
   components: {
     'fabric-canvas': FabricCanvas,
@@ -34,5 +41,10 @@ export default {
 <style>
 canvas {
   display: block;
+}
+#board-function {
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
 </style>
