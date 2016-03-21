@@ -23,28 +23,37 @@ export default {
     }
   },
   methods: {
-    changeMode: (canvas) => {
-      canvas.isDrawingMode = !canvas.isDrawingMode;
+    changeMode: function() {
+      this.canvas.isDrawingMode = !this.canvas.isDrawingMode;
     },
-    upload: (canvas) => {
+    upload: function() {
       const reader = new FileReader();
       const file = document.getElementById('upload').files[0];
       reader.onload = (e) => {
         fabric.Image.fromURL(reader.result, (img) => {
-          canvas.add(img);
-          canvas.renderAll();
+          this.canvas.add(img);
+          this.canvas.renderAll();
         });
       };
       if (file) {
         reader.readAsDataURL(file);
       }
-    }
+    },
+    resize: function() {
+      console.log('resize');
+      this.canvas.setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    },
   },
   ready() {
     this.canvas = new fabric.Canvas('c', {isDrawingMode: true});
     this.canvas.setDimensions({width: window.innerWidth, height:window.innerHeight});
     this.canvas.setBackgroundColor('grey');
     this.canvas.renderAll();
+
+    window.onresize = this.resize;
   }
 }
 </script>
