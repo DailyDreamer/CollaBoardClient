@@ -25,6 +25,19 @@ function canvasEvents(canvas, socket) {
     });
   });
 
+  canvas.on('object:removed', (e) => {
+    let fabricObject = e.target;
+    if (!fabricObject.remote) {
+      socket.emit('object:removed', Helper.genJSONString(fabricObject));
+    };
+    delete fabricObject.remote;
+  });
+
+  socket.on('object:removed', (msg) => {
+    let rawObject = JSON.parse(msg);
+    canvas.remove(Helper.getObjectByUUID(canvas, rawObject.uuid));
+  });
+
   socket.on('note:added', function(msg) {
     let note = JSON.parse(msg);
     fabric.util.enlivenObjects(note.objects, function(fabricObjects) {
