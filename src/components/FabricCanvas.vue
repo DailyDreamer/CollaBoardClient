@@ -76,7 +76,6 @@ export default {
     this.canvas.freeDrawingBrush = new fabric['PencilBrush'](this.canvas);
     this.canvas.selection = false;
     this.canvas.renderAll();
-
     window.onresize = this.resize;
   }
 }

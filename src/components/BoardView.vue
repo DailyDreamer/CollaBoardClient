@@ -32,6 +32,23 @@ export default {
   },
   ready() {
     this.canvas = this.$children[0].canvas;
+    //restore data from db
+    this.$http.get(`http://${Config.server}/api/state/${this.$route.params.rid}`).then( (res) => {
+      if (res) {
+        let rawObjects = res.data;
+        let keys = Object.keys(rawObjects);
+        for (let key of keys) {
+          fabric.util.enlivenObjects([rawObjects[key]], (fabricObjects) => {
+            for(let fabricObject of fabricObjects) {
+                fabricObject.remote = true;
+                this.canvas.add(fabricObject);
+            };
+            this.canvas.renderAll();
+          });
+        }
+      }
+    });
+
     this.socket = io(Config.server);
     this.socket.emit('join', this.$route.params.rid);
     canvasEvents(this.canvas, this.socket);

@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     newRoom: function(){
-      this.$http.get(`http://${Config.server}/api/rid`).then( (res) => {
+      this.$http.get(`http://${Config.server}/api/genRid`).then( (res) => {
         if (!!$.os.tablet || !!$.os.phone){
           this.$route.router.go({ name: 'note', params: { rid: res.data }});
         } else {

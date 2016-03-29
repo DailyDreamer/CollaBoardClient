@@ -3,7 +3,34 @@ import Helper from './Helper.js'
 
 
 function canvasEvents(canvas, socket) {
-  canvas.on('object:added', function(e) {
+
+  socket.on('note:added', (msg) => {
+    let note = JSON.parse(msg);
+    fabric.util.enlivenObjects(note.objects, (fabricObjects) => {
+      for (let fabricObject of fabricObjects) {
+        fabricObject.hasBorders = false;
+      }
+      let group = new fabric.Group(fabricObjects, {
+        left: 0,
+        top: 0,
+      });
+      let back = new fabric.Rect({
+        left: group.left,
+        top: group.top,
+        fill: 'yellow',
+        width: group.width,
+        height: group.height,
+      });
+      group.addWithUpdate(back);
+      back.sendToBack();
+      group.type = 'note';
+      group.remote = true;
+      group.setOptions({uuid: note.uuid});
+      canvas.add(group);
+    });
+  });
+
+  canvas.on('object:added', (e) => {
     let fabricObject = e.target;
     if(!fabricObject.remote) {
       fabricObject.setOptions({uuid: Helper.genUUID()});
@@ -12,10 +39,10 @@ function canvasEvents(canvas, socket) {
     delete fabricObject.remote;
   });
 
-  socket.on('object:added', function(msg) {
+  socket.on('object:added', (msg) => {
     //bring object back to fabricObject
     let rawObject = JSON.parse(msg);
-    fabric.util.enlivenObjects([rawObject], function(fabricObjects) {
+    fabric.util.enlivenObjects([rawObject], (fabricObjects) => {
       console.log(fabricObjects);
       for(let fabricObject of fabricObjects) {
           fabricObject.remote = true;
@@ -38,45 +65,9 @@ function canvasEvents(canvas, socket) {
     canvas.remove(Helper.getObjectByUUID(canvas, rawObject.uuid));
   });
 
-  socket.on('note:added', function(msg) {
-    let note = JSON.parse(msg);
-    fabric.util.enlivenObjects(note.objects, function(fabricObjects) {
-      console.log(fabricObjects);
-      for (let fabricObject of fabricObjects) {
-        fabricObject.hasBorders = false;
-      }
-      let group = new fabric.Group(fabricObjects, {
-        left: 0,
-        top: 0,
-      });
-      let back = new fabric.Rect({
-        left: group.left,
-        top: group.top,
-        fill: 'yellow',
-        width: group.width,
-        height: group.height,
-      });
-      group.addWithUpdate(back);
-      back.sendToBack();
-      group.type = 'note';
-      group.remote = true;
-      console.log(note.uuid);
-      group.setOptions({uuid: note.uuid});
-      canvas.add(group);
-    });
-  });
-
   canvas.on('object:moving', (e) => {
     if(e.target.type === 'group') {
       //todo add support for group modified
-    /*  let fabricObjects = e.target;
-      for (let fabricObject of fabricObjects.objects) {
-        socket.emit('object:modified', JSON.stringify({
-          top: fabricObject.top + fabricObjects.top,
-          left: fabricObject.left + fabricObjects.left,
-          uuid: fabricObject.uuid,
-        }));
-      }*/
     } else {
       let fabricObject = e.target;
       socket.emit('object:modified', Helper.genJSONString(fabricObject));
