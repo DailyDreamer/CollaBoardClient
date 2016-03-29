@@ -5,9 +5,9 @@
       <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="mode" v-on:click="changeMode()">mode_edit</button>
       <div class="mdl-tooltip mdl-tooltip--right" for="mode">Select or write</div>
 
-      <div class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon mdl-button--file" id="upload">
+      <div class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon mdl-button--file">
         <i class="material-icons">attach_file</i>
-        <input type="file" v-on:change="upload()">
+        <input type="file" id="upload" v-on:change="upload()">
       </div>
       <div class="mdl-tooltip mdl-tooltip--right" for="upload">Write a note</div>
 
