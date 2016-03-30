@@ -33,7 +33,27 @@ export default {
     send: function() {
       //send whole canvas as a note
       this.canvas.uuid = Helper.genUUID();
-      this.socket.emit('note:added', Helper.genJSONString(this.canvas));
+
+      let fabricObjects = this.canvas.getObjects();
+      for (let fabricObject of fabricObjects) {
+        fabricObject.hasBorders = false;
+      }
+      let group = new fabric.Group(fabricObjects, {
+        left: 0,
+        top: 0,
+      });
+      let back = new fabric.Rect({
+        left: group.left,
+        top: group.top,
+        fill: 'yellow',
+        width: group.width,
+        height: group.height,
+      });
+      group.addWithUpdate(back);
+      back.sendToBack();
+      group.setOptions({uuid: Helper.genUUID()});
+
+      this.socket.emit('object:added', Helper.genJSONString(group));
     },
     clear: function() {
       this.canvas.clear();
