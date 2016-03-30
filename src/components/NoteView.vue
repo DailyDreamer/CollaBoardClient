@@ -45,7 +45,7 @@ export default {
       let back = new fabric.Rect({
         left: group.left,
         top: group.top,
-        fill: 'yellow',
+        fill: 'yellow',   //todo: need to change color
         width: group.width,
         height: group.height,
       });
@@ -54,6 +54,7 @@ export default {
       group.setOptions({uuid: Helper.genUUID()});
 
       this.socket.emit('object:added', Helper.genJSONString(group));
+      this.canvas.clear();
     },
     clear: function() {
       this.canvas.clear();

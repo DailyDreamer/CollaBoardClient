@@ -44,7 +44,8 @@ module.exports = {
     ]
   },
   externals: {
-    'fabric': 'fabric'
+    'fabric': 'fabric',
+    '$': '$'
   },
   devServer: {
     historyApiFallback: true,

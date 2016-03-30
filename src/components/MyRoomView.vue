@@ -4,6 +4,7 @@
 
 <script>
 import Config from '../Config.js'
+import $ from '$'
 
 export default {
   data() {
