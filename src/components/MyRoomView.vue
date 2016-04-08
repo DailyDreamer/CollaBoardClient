@@ -14,7 +14,7 @@ export default {
   },
   methods: {
     newRoom: function(){
-      this.$http.get(`http://${Config.server}/api/genRid`).then( (res) => {
+      this.$http.post(`http://${Config.server}/api/room`, {}, { headers: { 'Content-Type':'text/plain' }}).then( (res) => {
         if (!!$.os.tablet || !!$.os.phone){
           this.$route.router.go({ name: 'note', params: { rid: res.data }});
         } else {

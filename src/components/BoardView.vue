@@ -33,7 +33,7 @@ export default {
   ready() {
     this.canvas = this.$children[0].canvas;
     //restore data from db
-    this.$http.get(`http://${Config.server}/api/state/${this.$route.params.rid}`).then( (res) => {
+    this.$http.get(`http://${Config.server}/api/room/${this.$route.params.rid}`).then( (res) => {
       if (res) {
         let rawObjects = res.data;
         let keys = Object.keys(rawObjects);

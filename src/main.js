@@ -13,6 +13,21 @@ import NoteView from './components/NoteView.vue'
 Vue.use(Router)
 Vue.use(Resource)
 
+// set withCredentials bring cookie to server through ajax
+Vue.http.interceptors.push({
+  request: function (req) {
+    console.log(req);
+    req.xhr = { withCredentials: true };
+    return req;
+  },
+  response: function (res) {
+    if (res.status === 401){ //Unauthorized error
+      router.go({ name: 'login' });
+    }
+    return res;
+  }
+});
+
 var router = new Router()
 
 router.map({
@@ -24,8 +39,8 @@ router.map({
     name: 'signup',
     component: SignupView
   },
-  '/myrooms/:uid': {
-    name: 'myrooms',
+  '/index': {
+    name: 'index',
     component: MyRoomView
   },
   '/board/:rid': {

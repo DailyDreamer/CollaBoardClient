@@ -19,7 +19,6 @@ export default {
   },
   methods: {
     signUp: function() {
-      console.log(this.user);
       this.$http.post(`http://${Config.server}/api/signUp`, this.user).then( (res) => {
         console.log(res.data);
       });

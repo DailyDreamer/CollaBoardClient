@@ -19,12 +19,12 @@ export default {
   },
   methods: {
     login: function() {
-      console.log(this.user);
-      //todo add xhr before all push
-      this.$http.post(`http://${Config.server}/api/login`, this.user, {xhr: {withCredentials: true }}).then( (res) => {
-        console.log(res.data);
-        console.log(res.headers());
-        console.log(res);
+      this.$http.post(`http://${Config.server}/api/login`, this.user).then( (res) => {
+        if (res.data.err) {
+          console.log(res.data.err);
+        } else {
+          this.$route.router.go({ name: 'index' });
+        }
       });
     }
   }
