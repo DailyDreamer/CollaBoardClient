@@ -20,7 +20,11 @@ export default {
   methods: {
     signUp: function() {
       this.$http.post(`http://${Config.server}/api/signUp`, this.user).then( (res) => {
-        console.log(res.data);
+        if (res.data.err) {
+          console.log(res.data.err);
+        } else {
+          this.$route.router.go({ name: 'login' });
+        }
       });
     }
   }

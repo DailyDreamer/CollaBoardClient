@@ -16,13 +16,15 @@ Vue.use(Resource)
 // set withCredentials bring cookie to server through ajax
 Vue.http.interceptors.push({
   request: function (req) {
-    console.log(req);
+    req.headers['Authorization'] = '';
     req.xhr = { withCredentials: true };
     return req;
   },
   response: function (res) {
     if (res.status === 401){ //Unauthorized error
       router.go({ name: 'login' });
+    } else if (res.status === 404) { //not found
+      router.go({ name: 'index' });
     }
     return res;
   }

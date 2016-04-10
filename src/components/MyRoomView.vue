@@ -1,5 +1,11 @@
 <template>
+  <input type="text" v-model="rname" placeholder="Room name">
   <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="new-room" v-on:click="newRoom()">New Room</button>
+  <ul>
+    <li v-for="room in rooms">
+      <a v-link="{name: this.device, params: {rid: room.rid} }">{{room.rname}}</a>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -9,20 +15,35 @@ import $ from '$'
 export default {
   data() {
     return {
-
+      rooms: [],
+      device: '',
+      rname: '',
     }
   },
   methods: {
     newRoom: function(){
-      this.$http.post(`http://${Config.server}/api/room`, {}, { headers: { 'Content-Type':'text/plain' }}).then( (res) => {
-        if (!!$.os.tablet || !!$.os.phone){
-          this.$route.router.go({ name: 'note', params: { rid: res.data }});
-        } else {
-          this.$route.router.go({ name: 'board', params: { rid: res.data }});
-        }
+      this.$http.post(`http://${Config.server}/api/room`, { rname: this.rname }).then( (res) => {
+        this.toRoom(res.data);
       });
+    },
+    toRoom: function(rid) {
+      this.$route.router.go({ name: this.device, params: { rid: rid }});
     }
-  }
+  },
+  ready() {
+    this.$http.get(`http://${Config.server}/api/user`).then( (res) => {
+      if (res.data.err) {
+        console.log(res.data.err);
+      } else {
+        this.rooms = res.data.rooms;
+      }
+      if (!!$.os.tablet || !!$.os.phone){
+        this.device = 'note';
+      } else {
+        this.device = 'board';
+      }
+    });
+  },
 }
 </script>
 <style>
