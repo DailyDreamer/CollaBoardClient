@@ -4,6 +4,7 @@
     <div id="board-function">
       <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="to-note" v-on:click="toNote()">note_add</button>
       <div class="mdl-tooltip mdl-tooltip--right" for="to-note">Write a note</div><br/>
+      <a class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="download" v-on:click="download($event)">download</a>
     </div>
   </div>
 </template>
@@ -25,6 +26,10 @@ export default {
   methods: {
     toNote: function() {
       this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
+    },
+    download: function(e) {
+      let data = this.canvas.toDataURL();
+      e.target.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     }
   },
   components: {
