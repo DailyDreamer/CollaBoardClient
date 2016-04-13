@@ -30,6 +30,10 @@
 import fabric from 'fabric'
 
 export default {
+  props: {
+    canvasWidth: Number,
+    canvasHeight: Number,
+  },
   data() {
     return {
       canvas: null,
@@ -67,23 +71,39 @@ export default {
         width: window.innerWidth,
         height: window.innerHeight
       });
+      this.canvas.renderAll();
     },
   },
   ready() {
     this.canvas = new fabric.Canvas('c', {isDrawingMode: true});
-    this.canvas.setDimensions({width: window.innerWidth, height:window.innerHeight});
+    this.canvas.setDimensions({width: window.innerWidth, height: window.innerHeight});
+    console.log();
+
+  /*  let c = document.getElementsByClassName('canvas-container')[0];
+    let scaleValue = 'scale('+ window.innerWidth/this.canvasWidth + ','+window.innerHeight/this.canvasHeight+')';
+    c.style.webkitTransform = scaleValue;
+    c.style.MozTransform = scaleValue;
+    c.style.transform = scaleValue; */
+
     this.canvas.setBackgroundColor('grey');
     this.canvas.freeDrawingBrush = new fabric['PencilBrush'](this.canvas);
     this.canvas.selection = false;
     this.canvas.renderAll();
+
     window.onresize = this.resize;
   }
 }
 </script>
 <style>
-canvas {
-  display: block;
+#FabricCanvas {
+  overflow: hidden;
 }
+.canvas-container {
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  transform-origin: 0 0;
+}
+
 #canvas-funtion {
   position: fixed;
   top: 0;

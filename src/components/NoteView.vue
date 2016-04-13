@@ -1,6 +1,6 @@
 <template>
   <div id="note">
-    <fabric-canvas></fabric-canvas>
+    <fabric-canvas :canvas-width="Config.NoteWidth" :canvas-height="Config.NoteHeight"></fabric-canvas>
     <div id="note-function">
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="send" v-on:click="send()">send</button>
         <div class="mdl-tooltip mdl-tooltip--right" for="send">Send</div><br/>
@@ -23,7 +23,8 @@ export default {
   data() {
     return {
       canvas: null,
-      socket: null
+      socket: null,
+      Config: Config,
     }
   },
   components: {
@@ -71,9 +72,6 @@ export default {
 }
 </script>
 <style>
-canvas {
-  display: block;
-}
 #note-function {
   position: fixed;
   bottom: 0;

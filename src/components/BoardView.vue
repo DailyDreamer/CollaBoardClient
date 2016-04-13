@@ -1,6 +1,6 @@
 <template>
   <div id="board">
-    <fabric-canvas></fabric-canvas>
+    <fabric-canvas :canvas-width="Config.BoardWidth" :canvas-height="Config.BoardHeight"></fabric-canvas>
     <div id="board-function">
       <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="to-note" v-on:click="toNote()">note_add</button>
       <div class="mdl-tooltip mdl-tooltip--right" for="to-note">Write a note</div><br/>
@@ -20,7 +20,8 @@ export default {
   data() {
     return {
       canvas: null,
-      socket: null
+      socket: null,
+      Config: Config
     }
   },
   methods: {
@@ -28,7 +29,7 @@ export default {
       this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
     },
     download: function(e) {
-      let data = this.canvas.toDataURL();
+      let data = this.canvas.toDataURL({format: 'png'});
       e.target.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     }
   },
@@ -61,9 +62,6 @@ export default {
 }
 </script>
 <style>
-canvas {
-  display: block;
-}
 #board-function {
   position: fixed;
   bottom: 0;

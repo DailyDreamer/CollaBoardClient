@@ -13,6 +13,9 @@ import NoteView from './components/NoteView.vue'
 Vue.use(Router)
 Vue.use(Resource)
 
+
+Vue.config.debug = true
+
 // set withCredentials bring cookie to server through ajax
 Vue.http.interceptors.push({
   request: function (req) {
