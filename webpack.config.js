@@ -44,7 +44,6 @@ module.exports = {
     ]
   },
   externals: {
-    'fabric': 'fabric',
     '$': '$'
   },
   devServer: {

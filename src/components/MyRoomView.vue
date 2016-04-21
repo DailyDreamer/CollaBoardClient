@@ -1,6 +1,6 @@
 <template>
   <input type="text" v-model="rname" placeholder="Room name">
-  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="new-room" v-on:click="newRoom()">New Room</button>
+  <button v-on:click="newRoom()">New Room</button>
   <ul>
     <li v-for="room in rooms">
       <a v-link="{name: this.device, params: {rid: room.rid} }">{{room.rname}}</a>

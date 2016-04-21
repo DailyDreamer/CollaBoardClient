@@ -1,27 +1,31 @@
 <template>
   <div id="board">
-    <fabric-canvas :canvas-width="Config.BoardWidth" :canvas-height="Config.BoardHeight"></fabric-canvas>
+    <component v-for="note in notes" :is="note.type" :note="note"></component>
+    <svg width="3000" height="3000"></svg>
     <div id="board-function">
-      <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored icon material-icons" id="to-note" v-on:click="toNote()">note_add</button>
-      <div class="mdl-tooltip mdl-tooltip--right" for="to-note">Write a note</div><br/>
-      <a class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="download" v-on:click="download($event)">download</a>
+      <button v-on:click="toNote()">add note</button>
+      <button v-on:click="download($event)">download</button>
     </div>
   </div>
 </template>
 
 <script>
-import fabric from 'fabric'
+import d3 from 'd3'
 import io from 'socket.io-client'
-import Config from '../Config.js'
-import canvasEvents from './CanvasEvents.js'
-import FabricCanvas from './FabricCanvas.vue'
+import TextNote from './TextNote.vue'
 
 export default {
   data() {
     return {
-      canvas: null,
-      socket: null,
-      Config: Config
+      notes : [{
+        id: '1',
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 250,
+        type: 'text-note',
+        text: 'This is a test',
+      }],
     }
   },
   methods: {
@@ -29,42 +33,57 @@ export default {
       this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
     },
     download: function(e) {
-      let data = this.canvas.toDataURL({format: 'png'});
-      e.target.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-    }
+      //TODO
+    },
   },
   components: {
-    'fabric-canvas': FabricCanvas,
+    'text-note' : TextNote,
   },
   ready() {
-    this.canvas = this.$children[0].canvas;
-    //restore data from db
-    this.$http.get(`http://${Config.server}/api/room/${this.$route.params.rid}`).then( (res) => {
-      if (res) {
-        let rawObjects = res.data;
-        let keys = Object.keys(rawObjects);
-        for (let key of keys) {
-          fabric.util.enlivenObjects([rawObjects[key]], (fabricObjects) => {
-            for(let fabricObject of fabricObjects) {
-                fabricObject.remote = true;
-                this.canvas.add(fabricObject);
-            };
-            this.canvas.renderAll();
-          });
-        }
-      }
-    });
+    let drag = d3.behavior.drag()
+        .origin(Object)
+        .on("drag", function(d) {
+          d3.select(this)
+          .attr('x', d.x = d3.event.x)
+          .attr('y', d.y = d3.event.y);
+        });
+    d3.select('svg').selectAll('rect')
+        .data(this.notes)
+        .enter()
+        .append('rect')
+        .style('opacity', 0.1)
+        .style('cursor', 'move')
+        .attr('x', d => d.x)
+        .attr('y', d => d.y)
+        .attr('width', d => d.width)
+        .attr('height', d => d.height)
+        .call(drag);
 
-    this.socket = io(Config.server);
-    this.socket.emit('join', this.$route.params.rid);
-    canvasEvents(this.canvas, this.socket);
   }
 }
 </script>
+
 <style>
+#board {
+  position: absolute;
+}
 #board-function {
   position: fixed;
   bottom: 0;
   right: 0;
+}
+svg {
+  position: absolute;
+}
+.note{
+  background-color: rgb(255, 240, 70);
+  padding: 10px;
+  position: absolute;
+  -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 </style>
