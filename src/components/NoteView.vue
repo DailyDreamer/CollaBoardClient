@@ -9,14 +9,12 @@
 
 <script>
 import io from 'socket.io-client'
-import Config from '../Config.js'
 
 export default {
   data() {
     return {
       canvas: null,
       socket: null,
-      Config: Config,
     }
   },
   components: {

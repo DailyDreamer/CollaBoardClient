@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Config from '../Config.js'
+import config from '../config.json'
 
 export default {
   data() {
@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     signUp: function() {
-      this.$http.post(`http://${Config.server}/api/signUp`, this.user).then( (res) => {
+      this.$http.post(`http://${config.server}/api/signUp`, this.user).then( (res) => {
         if (res.data.err) {
           console.log(res.data.err);
         } else {

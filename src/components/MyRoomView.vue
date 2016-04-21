@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Config from '../Config.js'
+import config from '../config.json'
 import $ from '$'
 
 export default {
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     newRoom: function(){
-      this.$http.post(`http://${Config.server}/api/room`, { rname: this.rname }).then( (res) => {
+      this.$http.post(`http://${config.server}/api/room`, { rname: this.rname }).then( (res) => {
         this.toRoom(res.data);
       });
     },
@@ -31,7 +31,7 @@ export default {
     }
   },
   ready() {
-    this.$http.get(`http://${Config.server}/api/user`).then( (res) => {
+    this.$http.get(`http://${config.server}/api/user`).then( (res) => {
       if (res.data.err) {
         console.log(res.data.err);
       } else {
