@@ -2,8 +2,14 @@
   <div id="board">
     <div id="board-zoom">
       <div id="board-content">
-        <component v-for="note in notes" :is="note.type" :note="note"></component>
-        <svg></svg>
+        <template v-for="note in notes">
+          <div class="note" v-bind:style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
+            <component :is="note.type" :note="note"></component>
+          </div>
+        </template>
+        <svg>
+          <rect-mask v-for="note in notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
+        </svg>
       </div>
     </div>
     <div id="board-function">
@@ -17,11 +23,14 @@
 import d3 from 'd3'
 import io from 'socket.io-client'
 import config from '../config.json'
+import RectMask from './RectMask.vue'
 import TextNote from './TextNote.vue'
+import SketchNote from './SketchNote.vue'
 
 export default {
   data() {
     return {
+      scale: 1,
       notes : [{
         id: '1',
         x: 0,
@@ -29,7 +38,7 @@ export default {
         width: config.NoteWidth,
         height: config.NoteHeight,
         type: 'text-note',
-        text: 'This is a test',
+        content: 'This is a test',
       }],
     }
   },
@@ -42,9 +51,20 @@ export default {
     },
   },
   components: {
-    'text-note' : TextNote,
+    'rect-mask': RectMask,
+    'text-note': TextNote,
+    'sketch-note': SketchNote,
   },
   ready() {
+    this.socket = io(config.server);
+    this.socket.emit('join', this.$route.params.rid);
+
+    this.socket.on('note:added', msg => {
+      let note = JSON.parse(msg);
+      this.notes.push(note);
+    });
+
+    //d3.js
     let boardZoom = d3.select('#board-zoom');
     let boardContent = d3.select('#board-content')
       .style('width', config.BoardWidth + 'px')
@@ -52,7 +72,6 @@ export default {
     let svg = d3.select('svg')
       .attr('width', config.BoardWidth)
       .attr('height', config.BoardHeight);
-    let rects = svg.selectAll('rect');
 
     //generate axis
     svg.append("g")
@@ -75,49 +94,15 @@ export default {
         .attr("x2", config.BoardWidth)
         .attr("y2", function(d) { return d; });
 
-    //zoom
-    let scale = 1;
+    //zoom and panning behavior
     let zoom = d3.behavior.zoom()
       .scaleExtent([0.1, 10])
       .on("zoom", () => {
-        console.log(d3.event.translate);
         boardContent
-          .style('transform', 'scale(' + d3.event.scale + ') translate(' + d3.event.translate[0] + 'px, ' + d3.event.translate[1] + 'px)' )
-          .style('transform-origin', d3.event.x + ' ' + d3.event.y);
-        scale = d3.event.scale;
+          .style('transform', 'scale(' + d3.event.scale + ') translate(' + d3.event.translate[0] + 'px, ' + d3.event.translate[1] + 'px)' );
+        this.scale = d3.event.scale;
       });
     boardZoom.call(zoom);
-
-    //drag objects
-    let originX, originY;
-    let drag = d3.behavior.drag()
-      .origin(Object)
-      .on("dragstart", function(d) {
-        d3.event.sourceEvent.stopPropagation();
-        d3.select(this).classed("dragging", true);
-        originX = d.x;
-        originY = d.y;
-      })
-      .on("drag", function(d) {
-        d.x = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (d3.event.x - originX) / scale)));
-        d.y = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (d3.event.y - originY) / scale)));
-        d3.select(this)
-        .attr('x', d.x)
-        .attr('y', d.y);
-      })
-      .on('dragend', function(d) {
-        d3.select(this).classed("dragging", false);
-      });
-
-    //automatical generate rect object
-    rects.data(this.notes)
-      .enter().append('rect')
-      .attr('x', d => d.x)
-      .attr('y', d => d.y)
-      .attr('width', d => d.width)
-      .attr('height', d => d.height)
-      .call(drag)
-  //    rects.exit().remove();
   }
 }
 </script>
@@ -136,6 +121,9 @@ export default {
 }
 #board-content {
   position: absolute;
+  -webkit-transform-origin: 0 0;
+     -moz-transform-origin: 0 0;
+          transform-origin: 0 0;
 }
 #board-function {
   position: fixed;
@@ -145,13 +133,9 @@ export default {
 svg {
   position: absolute;
   overflow: hidden;
-  border: black 2px solid;
 }
 .axis line {
-  fill: none;
   stroke: #ddd;
-  shape-rendering: crispEdges;
-  vector-effect: non-scaling-stroke;
 }
 rect {
   opacity: 0.1;
