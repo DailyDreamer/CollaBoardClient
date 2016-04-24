@@ -1,14 +1,14 @@
 <template>
   <div id="board">
     <div id="board-zoom">
-      <div id="board-content">
-        <template v-for="note in notes">
-          <div class="note" v-bind:style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
+      <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate[0] + 'px, ' + translate[1] + 'px)'}">
+        <template v-for="note in notes" track-by="id">
+          <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
             <component :is="note.type" :note="note"></component>
           </div>
         </template>
-        <svg>
-          <rect-mask v-for="note in notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
+        <svg :width="config.BoardWidth" :height="config.BoardHeight">
+          <rect-mask v-for="note in notes" track-by="id" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
         </svg>
       </div>
     </div>
@@ -30,7 +30,9 @@ import SketchNote from './SketchNote.vue'
 export default {
   data() {
     return {
+      config: config,
       scale: 1,
+      translate: [0, 0],
       notes : [{
         id: '1',
         x: 0,
@@ -58,22 +60,13 @@ export default {
   ready() {
     this.socket = io(config.server);
     this.socket.emit('join', this.$route.params.rid);
-
     this.socket.on('note:added', msg => {
       let note = JSON.parse(msg);
       this.notes.push(note);
     });
 
-    //d3.js
-    let boardZoom = d3.select('#board-zoom');
-    let boardContent = d3.select('#board-content')
-      .style('width', config.BoardWidth + 'px')
-      .style('height', config.BoardHeight + 'px');
-    let svg = d3.select('svg')
-      .attr('width', config.BoardWidth)
-      .attr('height', config.BoardHeight);
-
     //generate axis
+    let svg = d3.select('svg');
     svg.append("g")
         .attr("class", "x axis")
       .selectAll("line")
@@ -96,13 +89,12 @@ export default {
 
     //zoom and panning behavior
     let zoom = d3.behavior.zoom()
-      .scaleExtent([0.1, 10])
+      .scaleExtent([0.1, 5])
       .on("zoom", () => {
-        boardContent
-          .style('transform', 'scale(' + d3.event.scale + ') translate(' + d3.event.translate[0] + 'px, ' + d3.event.translate[1] + 'px)' );
         this.scale = d3.event.scale;
+        this.translate = d3.event.translate;
       });
-    boardZoom.call(zoom);
+    d3.select('#board-zoom').call(zoom);
   }
 }
 </script>

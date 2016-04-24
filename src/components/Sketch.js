@@ -1,3 +1,5 @@
+import d3 from 'd3'
+
 class Sketch {
   constructor(canvas) {
     this.canvas = document.getElementById(canvas);
@@ -8,20 +10,23 @@ class Sketch {
     let left = rect.left + window.pageXOffset;
     let top = rect.top + window.pageYOffset;
     let isDrawing = false;
-    this.canvas.onmousedown = ( e => {
-      isDrawing = true;
-      this.ctx.beginPath();
-      this.ctx.moveTo(e.pageX-left, e.pageY-top);
-    });
-    this.canvas.onmousemove = ( e => {
-      if (isDrawing) {
-        this.ctx.lineTo(e.pageX-left, e.pageY-top);
-        this.ctx.stroke();
-      }
-    });
-    this.canvas.onmouseup = ( e => {
-      isDrawing = false;
-    });
+
+    let drag = d3.behavior.drag()
+      .on("dragstart", () => {
+        d3.event.sourceEvent.stopPropagation();
+        isDrawing = true;
+        this.ctx.beginPath();
+      })
+      .on("drag", () => {
+        if (isDrawing) {
+          this.ctx.lineTo(d3.event.x-left, d3.event.y-top);
+          this.ctx.stroke();
+        }
+      })
+      .on('dragend', () => {
+        isDrawing = false;
+      });
+    d3.select(this.canvas).call(drag);
   }
 
   toDataURL(...args) {
