@@ -5,8 +5,19 @@
 <script>
 import d3 from 'd3'
 import config from '../config.json'
+import {
+  notifyStyleChange
+} from '../vuex/actions'
 
 export default {
+  vuex: {
+    getters: {
+      notes: state => state.notes,
+    },
+    actions: {
+      notifyStyleChange,
+    }
+  },
   props: {
     note: Object,
     scale: Number,
@@ -22,7 +33,7 @@ export default {
   ready() {
     //drag behavior
     let rect = d3.select(this.$el);
-    let originX, originY;
+    let originX, originY, tmpX, tmpY;
     let drag = d3.behavior.drag()
       .origin(() => {
         return {x: this.note.x, y: this.note.y};
@@ -34,8 +45,9 @@ export default {
         originY = this.note.y;
       })
       .on("drag", () => {
-        this.note.x = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (d3.event.x - originX) / this.scale)));
-        this.note.y = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (d3.event.y - originY) / this.scale)));
+        tmpX = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (d3.event.x - originX) / this.scale)));
+        tmpY = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (d3.event.y - originY) / this.scale)));
+        this.notifyStyleChange({ id: this.note.id, x:tmpX, y:tmpY });
       })
       .on('dragend', () => {
         rect.classed("dragging", false);

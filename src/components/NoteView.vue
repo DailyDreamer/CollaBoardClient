@@ -2,7 +2,7 @@
   <div id="note">
     <canvas id="c"></canvas>
     <div id="note-function">
-        <button v-on:click="send()">send</button>
+        <button v-on:click="save()">save</button>
         <button v-on:click="toBoard()">dashboard</button>
     </div>
   </div>
@@ -13,16 +13,25 @@ import io from 'socket.io-client'
 import $ from '$'
 import config from '../config.json'
 import Sketch from './Sketch.js'
+import {
+  contentChange
+} from '../vuex/actions'
 
 export default {
+  vuex: {
+    getters: {
+      notes: state => state.notes
+    },
+    actions: {
+      contentChange,
+    }
+  },
   data() {
     return {
       sketch: null,
       socket: null,
+      note: null,
     }
-  },
-  components: {
-
   },
   methods: {
     genUUID : function() {
@@ -31,7 +40,7 @@ export default {
           return v.toString(16)
       });
     },
-    send: function() {
+    save: function() {
       let note = {
         id: this.genUUID(),
         x: 0,

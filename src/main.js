@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Resource from 'vue-resource'
+import store from './vuex/store.js'
 
 import App from './components/App.vue'
 import LoginView from './components/LoginView.vue'
@@ -63,7 +64,10 @@ router.beforeEach(function () {
 })
 
 router.redirect({
-  '*': '/login'
+  '*': '/index'
 })
 
-router.start(App, '#app')
+router.start({
+  store,
+  components: { App }
+}, '#app')

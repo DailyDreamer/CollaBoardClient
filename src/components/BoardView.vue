@@ -2,13 +2,13 @@
   <div id="board">
     <div id="board-zoom">
       <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate[0] + 'px, ' + translate[1] + 'px)'}">
-        <template v-for="note in notes" track-by="id">
+        <template v-for="note of notes">
           <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
             <component :is="note.type" :note="note"></component>
           </div>
         </template>
         <svg :width="config.BoardWidth" :height="config.BoardHeight">
-          <rect-mask v-for="note in notes" track-by="id" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
+          <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
         </svg>
       </div>
     </div>
@@ -21,27 +21,44 @@
 
 <script>
 import d3 from 'd3'
-import io from 'socket.io-client'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
 import TextNote from './TextNote.vue'
 import SketchNote from './SketchNote.vue'
+import {
+  socketInit,
+  socketListen,
+  notesInit,
+  add,
+  styleChange,
+  contentChange
+} from '../vuex/actions'
 
 export default {
+  components: {
+    'rect-mask': RectMask,
+    'text-note': TextNote,
+    'sketch-note': SketchNote,
+  },
+  vuex: {
+    getters: {
+      socket: state => state.socket,
+      notes: state => state.notes,
+    },
+    actions: {
+      socketInit,
+      socketListen,
+      notesInit,
+      add,
+      styleChange,
+      contentChange,
+    }
+  },
   data() {
     return {
       config: config,
       scale: 1,
       translate: [0, 0],
-      notes : [{
-        id: '1',
-        x: 0,
-        y: 0,
-        width: config.NoteWidth,
-        height: config.NoteHeight,
-        type: 'text-note',
-        content: 'This is a test',
-      }],
     }
   },
   methods: {
@@ -52,18 +69,11 @@ export default {
       //TODO
     },
   },
-  components: {
-    'rect-mask': RectMask,
-    'text-note': TextNote,
-    'sketch-note': SketchNote,
-  },
   ready() {
-    this.socket = io(config.server);
-    this.socket.emit('join', this.$route.params.rid);
-    this.socket.on('note:added', msg => {
-      let note = JSON.parse(msg);
-      this.notes.push(note);
-    });
+    //init notes and socket
+    this.notesInit();
+    this.socketInit(this.$route.params.rid);
+    this.socketListen();
 
     //generate axis
     let svg = d3.select('svg');
