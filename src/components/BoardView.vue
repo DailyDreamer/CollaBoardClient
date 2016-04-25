@@ -13,8 +13,9 @@
       </div>
     </div>
     <div id="board-function">
-      <button v-on:click="toNote()">add note</button>
-      <button v-on:click="download($event)">download</button>
+      <input type="file" id="addImage" @change="addImage($event)">
+      <button @click="toNote()">add sketch</button>
+      <button @click="download($event)">download</button>
     </div>
   </div>
 </template>
@@ -25,13 +26,12 @@ import config from '../config.json'
 import RectMask from './RectMask.vue'
 import TextNote from './TextNote.vue'
 import SketchNote from './SketchNote.vue'
+import { genUUID } from '../lib/Helper.js'
 import {
   socketInit,
   socketListen,
   notesInit,
-  add,
-  styleChange,
-  contentChange
+  notifyAdd,
 } from '../vuex/actions'
 
 export default {
@@ -49,9 +49,7 @@ export default {
       socketInit,
       socketListen,
       notesInit,
-      add,
-      styleChange,
-      contentChange,
+      notifyAdd,
     }
   },
   data() {
@@ -62,6 +60,25 @@ export default {
     }
   },
   methods: {
+    addImage: function(e) {
+      let reader = new FileReader();
+      let file = e.target.files[0];
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+      reader.onload = () => {
+        let note = {
+          id: genUUID(),
+          x: 0,
+          y: 0,
+          width: config.NoteWidth,
+          height: config.NoteHeight,
+          type: 'sketch-note',
+          content: reader.result,
+        };
+        this.notifyAdd(note);
+      };
+    },
     toNote: function() {
       this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
     },

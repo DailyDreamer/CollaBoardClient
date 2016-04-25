@@ -12,7 +12,6 @@ import {
 export default {
   vuex: {
     getters: {
-      notes: state => state.notes,
     },
     actions: {
       notifyStyleChange,

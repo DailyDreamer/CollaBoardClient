@@ -2,47 +2,43 @@
   <div id="note">
     <canvas id="c"></canvas>
     <div id="note-function">
-        <button v-on:click="save()">save</button>
-        <button v-on:click="toBoard()">dashboard</button>
+        <button @click="save()">save</button>
+        <button @click="toBoard()">dashboard</button>
     </div>
   </div>
 </template>
 
 <script>
-import io from 'socket.io-client'
 import $ from '$'
 import config from '../config.json'
-import Sketch from './Sketch.js'
+import Sketch from '../lib/Sketch.js'
+import { genUUID } from '../lib/Helper.js'
 import {
-  contentChange
+  socketInit,
+  notifyAdd,
+  notifyContentChange,
 } from '../vuex/actions'
 
 export default {
   vuex: {
     getters: {
-      notes: state => state.notes
     },
     actions: {
-      contentChange,
+      socketInit,
+      notifyAdd,
+      notifyContentChange,
     }
   },
   data() {
     return {
       sketch: null,
-      socket: null,
       note: null,
     }
   },
   methods: {
-    genUUID : function() {
-      return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8)
-          return v.toString(16)
-      });
-    },
     save: function() {
       let note = {
-        id: this.genUUID(),
+        id: genUUID(),
         x: 0,
         y: 0,
         width: config.NoteWidth,
@@ -50,7 +46,7 @@ export default {
         type: 'sketch-note',
         content: this.sketch.toDataURL(),
       };
-      this.socket.emit('note:added', JSON.stringify(note));
+      this.notifyAdd(note);
       this.sketch.clean();
     },
     toBoard: function() {
@@ -58,8 +54,7 @@ export default {
     }
   },
   ready() {
-    this.socket = io(config.server);
-    this.socket.emit('join', this.$route.params.rid);
+    this.socketInit();
 
     //free drawing
     $('#c').attr('height', window.innerHeight)

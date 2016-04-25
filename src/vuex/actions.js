@@ -1,13 +1,13 @@
 export const socketInit = ({ dispatch }, rid) => dispatch('SOCKET_INIT', rid)
 
-export const socketListen = (store) => {
-  store.state.socket.on('note:added', msg => {
+export const socketListen = ({ dispatch, state }) => {
+  state.socket.on('note:added', msg => {
     let note = JSON.parse(msg);
-    add(store, note);
+    dispatch('ADD', note);
   });
-  store.state.socket.on('note:style', msg => {
+  state.socket.on('note:style', msg => {
     let style = JSON.parse(msg);
-    styleChange(store, style);
+    dispatch('STYLE_CHANGE', style);
   });
 }
 
@@ -23,12 +23,12 @@ export const notesInit = ({ dispatch }) => {
   }, };
   dispatch('NOTES_INIT', notes);
 }
-export const add = ({ dispatch }, note) => dispatch('ADD', note)
-export const styleChange = ({ dispatch, state }, style) => {
-  dispatch('STYLE_CHANGE', style);
+export const notifyAdd = ({ dispatch, state }, note) => {
+  state.socket.emit('note:added', JSON.stringify(note));
+  dispatch('ADD', note);
 }
 export const notifyStyleChange = ({ dispatch, state }, style) => {
   state.socket.emit('note:style', JSON.stringify(style));
   dispatch('STYLE_CHANGE', style);
 }
-export const contentChange = ({ dispatch }, content) => dispatch('CONTENT_CHANGE', content)
+export const notifyContentChange = ({ dispatch }, content) => dispatch('CONTENT_CHANGE', content)
