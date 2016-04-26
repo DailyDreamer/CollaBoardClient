@@ -1,4 +1,4 @@
-import d3 from 'd3'
+import Hammer from 'hammerjs'
 
 class Sketch {
   constructor(canvas) {
@@ -11,22 +11,21 @@ class Sketch {
     let top = rect.top + window.pageYOffset;
     let isDrawing = false;
 
-    let drag = d3.behavior.drag()
-      .on("dragstart", () => {
-        d3.event.sourceEvent.stopPropagation();
-        isDrawing = true;
-        this.ctx.beginPath();
-      })
-      .on("drag", () => {
-        if (isDrawing) {
-          this.ctx.lineTo(d3.event.x-left, d3.event.y-top);
-          this.ctx.stroke();
-        }
-      })
-      .on('dragend', () => {
-        isDrawing = false;
-      });
-    d3.select(this.canvas).call(drag);
+    let hammertime = new Hammer(this.canvas);
+    hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+    hammertime.on('panstart', () => {
+      isDrawing = true;
+      this.ctx.beginPath();
+    });
+    hammertime.on('panmove', (e) => {
+      if (isDrawing) {
+        this.ctx.lineTo(e.center.x-left, e.center.y-top);
+        this.ctx.stroke();
+      }
+    });
+    hammertime.on('panend', () => {
+      isDrawing = false;
+    });
   }
 
   toDataURL(...args) {

@@ -99,7 +99,7 @@ export default {
         this.scale = d3.event.scale;
         this.translate = d3.event.translate;
       });
-    d3.select('#board-zoom').call(zoom);
+//    d3.select('#board-zoom').call(zoom);
   }
 }
 </script>

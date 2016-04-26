@@ -37,7 +37,7 @@ export default {
         y: 0,
         width: config.NoteWidth,
         height: config.NoteHeight,
-        type: 'sketch-note',
+        type: 'sketch',
         content: this.sketch.toDataURL(),
       };
       this.notifyAdd(note);
@@ -49,6 +49,9 @@ export default {
   },
   ready() {
     this.socketInit();
+    let c = document.getElementById('c');
+    c.height = window.innerHeight;
+    c.width = window.innerWidth;
     this.sketch = new Sketch('c');
   }
 }
@@ -58,8 +61,6 @@ export default {
 #c {
   position: absolute;
   background-color: grey;
-  width: 100%;
-  height: 100%;
 }
 #sketch-function {
   position: fixed;

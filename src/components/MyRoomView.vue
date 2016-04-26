@@ -10,7 +10,7 @@
 
 <script>
 import config from '../config.json'
-import $ from '$'
+import { isMobile } from '../lib/Helper.js'
 
 export default {
   data() {
@@ -37,7 +37,7 @@ export default {
       } else {
         this.rooms = res.data.rooms;
       }
-      if (!!$.os.tablet || !!$.os.phone){
+      if (isMobile.any()){
         this.device = 'sketch';
       } else {
         this.device = 'board';

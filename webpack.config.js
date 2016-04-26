@@ -44,7 +44,7 @@ module.exports = {
     ]
   },
   externals: {
-    '$': '$'
+
   },
   devServer: {
     historyApiFallback: true,
