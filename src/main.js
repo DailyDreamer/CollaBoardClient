@@ -8,7 +8,7 @@ import LoginView from './components/LoginView.vue'
 import SignupView from './components/SignupView.vue'
 import MyRoomView from './components/MyRoomView.vue'
 import BoardView from './components/BoardView.vue'
-import NoteView from './components/NoteView.vue'
+import SketchView from './components/SketchView.vue'
 
 
 Vue.use(Router)
@@ -53,9 +53,9 @@ router.map({
     name: 'board',
     component: BoardView
   },
-  '/note/:rid': {
-    name: 'note',
-    component: NoteView
+  '/sketch/:rid': {
+    name: 'sketch',
+    component: SketchView
   }
 })
 

@@ -38,7 +38,7 @@ export default {
         this.rooms = res.data.rooms;
       }
       if (!!$.os.tablet || !!$.os.phone){
-        this.device = 'note';
+        this.device = 'sketch';
       } else {
         this.device = 'board';
       }

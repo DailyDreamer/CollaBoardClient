@@ -4,18 +4,18 @@
       <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate[0] + 'px, ' + translate[1] + 'px)'}">
         <template v-for="note of notes">
           <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
-            <component :is="note.type" :note="note"></component>
+            <component :is="'show-'+note.type" :note="note"></component>
           </div>
         </template>
         <svg :width="config.BoardWidth" :height="config.BoardHeight">
           <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
         </svg>
+        <add-note :show.sync="isAddingNote"></add-note>
       </div>
     </div>
     <div id="board-function">
-      <input type="file" id="addImage" @change="addImage($event)">
+      <button @click="isAddingNote=true">Add note</button>
       <button @click="toNote()">add sketch</button>
-      <button @click="download($event)">download</button>
     </div>
   </div>
 </template>
@@ -24,21 +24,21 @@
 import d3 from 'd3'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
-import TextNote from './TextNote.vue'
-import SketchNote from './SketchNote.vue'
-import { genUUID } from '../lib/Helper.js'
+import AddNote from './AddNote.vue'
+import ShowText from './ShowText.vue'
+import ShowSketch from './ShowSketch.vue'
 import {
   socketInit,
   socketListen,
   notesInit,
-  notifyAdd,
 } from '../vuex/actions'
 
 export default {
   components: {
     'rect-mask': RectMask,
-    'text-note': TextNote,
-    'sketch-note': SketchNote,
+    'add-note': AddNote,
+    'show-text': ShowText,
+    'show-sketch': ShowSketch,
   },
   vuex: {
     getters: {
@@ -49,7 +49,6 @@ export default {
       socketInit,
       socketListen,
       notesInit,
-      notifyAdd,
     }
   },
   data() {
@@ -57,33 +56,12 @@ export default {
       config: config,
       scale: 1,
       translate: [0, 0],
+      isAddingNote: false,
     }
   },
   methods: {
-    addImage: function(e) {
-      let reader = new FileReader();
-      let file = e.target.files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-      reader.onload = () => {
-        let note = {
-          id: genUUID(),
-          x: 0,
-          y: 0,
-          width: config.NoteWidth,
-          height: config.NoteHeight,
-          type: 'sketch-note',
-          content: reader.result,
-        };
-        this.notifyAdd(note);
-      };
-    },
     toNote: function() {
-      this.$route.router.go({ name: 'note', params: { rid: this.$route.params.rid }});
-    },
-    download: function(e) {
-      //TODO
+      this.$route.router.go({ name: 'sketch', params: { rid: this.$route.params.rid }});
     },
   },
   ready() {
@@ -160,10 +138,26 @@ rect {
   opacity: 0.1;
   cursor: move;
 }
-.note{
+.note {
   background-color: rgb(255, 240, 70);
   padding: 10px;
   position: absolute;
+  -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+#add {
+  position: absolute;
+  top: 400px;
+  left: 400px;
+  width: 400px;
+  height: 400px;
+
+  background-color: rgb(255, 240, 70);
+  padding: 10px;
   -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);

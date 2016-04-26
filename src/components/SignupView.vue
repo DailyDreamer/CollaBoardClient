@@ -1,9 +1,9 @@
 <template>
   <div id="SignUp">
-    <form class="" @submit.prevent="onSubmit">
+    <form class="" @submit.prevent="signUp">
       <input type="text" placeholder="name" v-model="user._id">
       <input type="password" v-model="user.password">
-      <button @click="signUp">SignUp</button>
+      <button type="submit">SignUp</button>
     </form>
   </div>
 </template>

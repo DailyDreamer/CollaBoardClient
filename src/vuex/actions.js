@@ -18,7 +18,7 @@ export const notesInit = ({ dispatch }) => {
     y: 0,
     width: 200,
     height: 250,
-    type: 'text-note',
+    type: 'text',
     content: 'This is a test',
   }, };
   dispatch('NOTES_INIT', notes);

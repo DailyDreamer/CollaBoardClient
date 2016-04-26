@@ -32,7 +32,6 @@ export default {
   data() {
     return {
       sketch: null,
-      note: null,
     }
   },
   methods: {
