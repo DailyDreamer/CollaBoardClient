@@ -1,6 +1,6 @@
 <template>
   <div id="note">
-    <canvas id="c"></canvas>
+    <canvas id="lc"></canvas>
     <div id="sketch-function">
         <button @click="save()">save</button>
         <button @click="toBoard()">dashboard</button>
@@ -49,16 +49,16 @@ export default {
   },
   ready() {
     this.socketInit();
-    let c = document.getElementById('c');
+    let c = document.getElementById('lc');
     c.height = window.innerHeight;
     c.width = window.innerWidth;
-    this.sketch = new Sketch('c');
+    this.sketch = new Sketch('lc');
   }
 }
 </script>
 
 <style>
-#c {
+#lc {
   position: absolute;
   background-color: grey;
 }

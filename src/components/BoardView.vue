@@ -22,6 +22,7 @@
 
 <script>
 import d3 from 'd3'
+import Hammer from 'hammerjs'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
 import AddNote from './AddNote.vue'
@@ -99,7 +100,15 @@ export default {
         this.scale = d3.event.scale;
         this.translate = d3.event.translate;
       });
-//    d3.select('#board-zoom').call(zoom);
+    d3.select('#board-zoom').call(zoom)
+      .on("dblclick.zoom", null);
+
+    let mc = new Hammer.Manager(document.getElementById('board-content'));
+    mc.add(new Hammer.Tap({ event: 'dbtap', taps: 2 }));
+    mc.on("dbtap", e => {
+      console.log('dbtap2');
+      console.log(e);
+    });
   }
 }
 </script>

@@ -4,6 +4,7 @@
 
 <script>
 import d3 from 'd3'
+import Hammer from 'hammerjs'
 import config from '../config.json'
 import {
   notifyStyleChange
@@ -52,6 +53,13 @@ export default {
         rect.classed("dragging", false);
       });
     rect.call(drag);
+
+    let mc = new Hammer.Manager(this.$el);
+    mc.add(new Hammer.Tap({ event: 'dbtap', taps: 2 }));
+    mc.on("dbtap", e => {
+      console.log('dbtap1');
+      console.log(e);
+    });
   }
 }
 </script>
