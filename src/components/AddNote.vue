@@ -2,65 +2,63 @@
   <div id="add" v-if="show">
     <div class="pure-menu pure-menu-horizontal">
       <ul class="pure-menu-list">
-        <li class="pure-menu-item pure-menu-link" @click="this.note.type='text'">Text</li>
-        <li class="pure-menu-item pure-menu-link" @click="this.note.type='sketch'">Image</li>
-        <li class="pure-menu-item pure-menu-link" @click="this.note.type='sketch'">Sketch</li>
+        <li class="pure-menu-item pure-menu-link" @click="type='text'">Text</li>
+        <li class="pure-menu-item pure-menu-link" @click="type='image'">Image</li>
+        <li class="pure-menu-item pure-menu-link" @click="type='sketch'">Sketch</li>
       </ul>
     </div>
-    <component :is="'add-'+this.note.type" :note="this.note"></component>
-    <input type="file" @change="addImage($event)">
+    <component :is="'add-'+this.type" :note="this.newNote()" @close="show=false"></component>
+    <button @click="addNote">add</button>
+    <button @click="show=false">cancle</button>
   </div>
 </template>
 
 <script>
 import config from '../config.json'
 import { genUUID } from '../lib/Helper.js'
-import {
-  notifyAdd,
-} from '../vuex/actions'
+import AddText from './AddText.vue'
+import AddImage from './AddImage.vue'
+import AddSketch from './AddSketch.vue'
 
 export default {
+  components: {
+    'add-text': AddText,
+    'add-image': AddImage,
+    'add-sketch': AddSketch,
+  },
   props: {
     show: Boolean,
   },
-  vuex: {
-    getters: {
-    },
-    actions: {
-      notifyAdd,
-    }
-  },
   data() {
     return {
-      note: null,
+      type: 'text',
+    }
+  },
+  computed: {
+    note: function() {
+
     }
   },
   methods: {
-    changeNoteType: function(e) {
-
-    },
-    addImage: function(e) {
-      let reader = new FileReader();
-      let file = e.target.files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-      reader.onload = () => {
-        this.note.content = reader.result;
-        this.notifyAdd(this.note);
+    newNote: function() {
+      //note type image === sketch
+      let type = (this.type === 'image') ? 'sketch' : this.type;
+      return {
+        id: genUUID(),
+        x: 0,
+        y: 0,
+        width: config.NoteWidth,
+        height: config.NoteHeight,
+        type: type,
+        content: null,
       };
+    },
+    addNote() {
+      this.$broadcast('add');
+      this.show = false;
     },
   },
   ready() {
-    this.note = {
-      id: genUUID(),
-      x: 0,
-      y: 0,
-      width: config.NoteWidth,
-      height: config.NoteHeight,
-      type: 'text',
-      content: null,
-    };
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div id="note">
     <canvas id="c"></canvas>
-    <div id="note-function">
+    <div id="sketch-function">
         <button @click="save()">save</button>
         <button @click="toBoard()">dashboard</button>
     </div>
@@ -9,24 +9,19 @@
 </template>
 
 <script>
-import $ from '$'
 import config from '../config.json'
 import Sketch from '../lib/Sketch.js'
 import { genUUID } from '../lib/Helper.js'
 import {
   socketInit,
   notifyAdd,
-  notifyContentChange,
 } from '../vuex/actions'
 
 export default {
   vuex: {
-    getters: {
-    },
     actions: {
       socketInit,
       notifyAdd,
-      notifyContentChange,
     }
   },
   data() {
@@ -54,11 +49,6 @@ export default {
   },
   ready() {
     this.socketInit();
-
-    //free drawing
-    $('#c').attr('height', window.innerHeight)
-          .attr('width', window.innerWidth);
-
     this.sketch = new Sketch('c');
   }
 }
@@ -68,8 +58,10 @@ export default {
 #c {
   position: absolute;
   background-color: grey;
+  width: 100%;
+  height: 100%;
 }
-#note-function {
+#sketch-function {
   position: fixed;
   bottom: 0;
   right: 0;

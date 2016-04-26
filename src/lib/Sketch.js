@@ -33,6 +33,10 @@ class Sketch {
     return this.canvas.toDataURL(args);
   }
 
+  drawImage(...args) {
+    return this.ctx.drawImage(args);
+  }
+
   clean() {
     this.ctx.save();
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
