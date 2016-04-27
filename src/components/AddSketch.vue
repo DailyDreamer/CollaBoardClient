@@ -6,12 +6,14 @@
 import Sketch from '../lib/Sketch.js'
 import {
   notifyAdd,
+  notifyContentChange,
 } from '../vuex/actions'
 
 export default {
   vuex: {
     actions: {
       notifyAdd,
+      notifyContentChange,
     }
   },
   props: {
@@ -30,13 +32,17 @@ export default {
       this.note.content = this.sketch.toDataURL();
       this.notifyAdd(this.note);
     },
+    'change': function() {
+      this.note.content = this.sketch.toDataURL();
+      this.notifyContentChange(this.note);
+    },
   },
   ready() {
     this.sketch = new Sketch('sc');
     let image = new Image();
     image.src = this.note.content;
     image.onload = () => {
-      this.sketch.drawImage(image);
+      this.sketch.drawImage(image, 0, 0);
     };
   }
 }

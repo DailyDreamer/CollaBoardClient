@@ -39,18 +39,20 @@ export default {
       if (e.target !== mcContainer) return;
       this.$dispatch('changenote', this.note);
     });
-    let ox, oy;
+    let objPos = { x: 0, y: 0 };
+    let tapPos = { x: 0, y: 0 };
+    let tmpX, tmpY;
     mc.on('panstart', (e) => {
       if (e.target !== mcContainer) return;
-      originX = this.note.x;
-      originY = this.note.y;
-      ox = e.center.x;
-      oy = e.center.y;
+      objPos.x = this.note.x;
+      objPos.y = this.note.y;
+      tapPos.x = e.center.x;
+      tapPos.y = e.center.y;
     });
     mc.on('panmove', (e) => {
       if (e.target !== mcContainer) return;
-      tmpX = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (e.center.x - ox) / this.scale)));
-      tmpY = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (e.center.y - oy) / this.scale)));
+      tmpX = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  objPos.x + (e.center.x - tapPos.x) / this.scale)));
+      tmpY = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  objPos.y + (e.center.y - tapPos.y) / this.scale)));
       this.notifyStyleChange({ id: this.note.id, x:tmpX, y:tmpY });
     });
   }

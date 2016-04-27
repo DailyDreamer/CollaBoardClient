@@ -5,12 +5,14 @@
 <script>
 import {
   notifyAdd,
+  notifyContentChange,
 } from '../vuex/actions'
 
 export default {
   vuex: {
     actions: {
       notifyAdd,
+      notifyContentChange,
     }
   },
   props: {
@@ -19,6 +21,9 @@ export default {
   events: {
     'add': function() {
       this.notifyAdd(this.note);
+    },
+    'change': function() {
+      this.notifyContentChange(this.note);
     },
   },
 }

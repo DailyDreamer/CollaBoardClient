@@ -1,5 +1,5 @@
 <template>
-  <div id="add" v-if="show" :style="{left: pos.x + 'px', top: pos.y + 'px'}">
+  <div class="addchange note" v-if="show" :style="{left: pos.x + 'px', top: pos.y + 'px'}">
     <div class="pure-menu pure-menu-horizontal">
       <ul class="pure-menu-list">
         <li class="pure-menu-item pure-menu-link" @click="type='text'">Text</li>
@@ -7,9 +7,9 @@
         <li class="pure-menu-item pure-menu-link" @click="type='sketch'">Sketch</li>
       </ul>
     </div>
-    <component :is="'add-'+this.type" :note="this.newNote()" @close="show=false"></component>
+    <component :is="'add-'+ type" :note="newNote()" @close="show=false"></component>
     <button @click="addNote">add</button>
-    <button @click="show=false">cancle</button>
+    <button @click="show=false">cancel</button>
   </div>
 </template>
 

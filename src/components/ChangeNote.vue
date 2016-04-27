@@ -1,8 +1,8 @@
 <template>
-  <div id="add" v-if="show" :style="{left: note.x + 'px', top: note.y + 'px'}">
-    <component :is="'change-'+this.type" :note="this.note" @close="show=false"></component>
-    <button @click="changeNote">add</button>
-    <button @click="show=false">cancle</button>
+  <div class="addchange note" v-if="show" :style="{left: note.x + 'px', top: note.y + 'px'}">
+    <component :is="'change-'+ note.type" :note="copyNote()" @close="show=false"></component>
+    <button @click="changeNote">change</button>
+    <button @click="show=false">cancel</button>
   </div>
 </template>
 
@@ -24,10 +24,10 @@ export default {
     return {
     }
   },
-  computed: {
-
-  },
   methods: {
+    copyNote: function() {
+      return Object.assign({}, this.note);
+    },
     changeNote: function() {
       this.$broadcast('change');
       this.show = false;

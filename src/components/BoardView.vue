@@ -10,7 +10,7 @@
         <svg id="svg-container" :width="config.BoardWidth" :height="config.BoardHeight">
           <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height" @changenote="changenote"></rect-mask>
         </svg>
-        <add-note :show.sync="isAddingNote" :pos="tapPos"></add-note>
+        <add-note :show.sync="isAddingNote" :pos="addingNotePos"></add-note>
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
     </div>
@@ -61,7 +61,7 @@ export default {
       translate: { x:0, y:0 },
       origin: { x:0, y:0 },
       isAddingNote: false,
-      tapPos: { x:0, y:0 },
+      addingNotePos: { x:0, y:0 },
       isChangingNote: false,
       changingNote: null,
     }
@@ -73,7 +73,6 @@ export default {
     changenote: function(note) {
       this.isAddingNote = false;
       this.changingNote = note;
-      console.log(note);
       this.isChangingNote = true;
     },
   },
@@ -118,8 +117,8 @@ export default {
     mc.on("dbtap", e => {
       if (e.target !== mcContainer) return;
       this.isChangingNote = false;
-      this.tapPos.x = e.center.x;
-      this.tapPos.y = e.center.y;
+      this.addingNotePos.x = e.center.x;
+      this.addingNotePos.y = e.center.y;
       this.isAddingNote = true;
     });
     mc.on('tap', e => {
@@ -138,7 +137,6 @@ export default {
       last.x = this.translate.x;
       last.y = this.translate.y;
     });
-
     //pinch to zoom
     mc.on('pinch', (e) => {
       this.scale = e.scale;
@@ -194,18 +192,9 @@ rect {
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
-#add {
+.addchange {
   position: absolute;
   width: 400px;
   height: 400px;
-
-  background-color: rgb(255, 240, 70);
-  padding: 10px;
-  -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
-       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
 }
 </style>

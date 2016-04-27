@@ -33,11 +33,11 @@ class Sketch {
   }
 
   toDataURL(...args) {
-    return this.canvas.toDataURL(args);
+    return this.canvas.toDataURL(...args);
   }
 
   drawImage(...args) {
-    return this.ctx.drawImage(args);
+    return this.ctx.drawImage(...args);
   }
 
   clean() {
