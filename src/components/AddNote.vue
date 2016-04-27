@@ -1,5 +1,5 @@
 <template>
-  <div id="add" v-if="show">
+  <div id="add" v-if="show" :style="{left: pos.x + 'px', top: pos.y + 'px'}">
     <div class="pure-menu pure-menu-horizontal">
       <ul class="pure-menu-list">
         <li class="pure-menu-item pure-menu-link" @click="type='text'">Text</li>
@@ -28,15 +28,11 @@ export default {
   },
   props: {
     show: Boolean,
+    pos: Object,
   },
   data() {
     return {
       type: 'text',
-    }
-  },
-  computed: {
-    note: function() {
-
     }
   },
   methods: {
@@ -45,8 +41,8 @@ export default {
       let type = (this.type === 'image') ? 'sketch' : this.type;
       return {
         id: genUUID(),
-        x: 0,
-        y: 0,
+        x: this.pos.x,
+        y: this.pos.y,
         width: config.NoteWidth,
         height: config.NoteHeight,
         type: type,

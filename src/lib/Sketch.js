@@ -11,19 +11,23 @@ class Sketch {
     let top = rect.top + window.pageYOffset;
     let isDrawing = false;
 
-    let hammertime = new Hammer(this.canvas);
-    hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-    hammertime.on('panstart', () => {
+    let mcContainer = this.canvas;
+    let mc = new Hammer.Manager(mcContainer);
+    mc.add(new Hammer.Pan());
+    mc.on('panstart', (e) => {
+      if (e.target !== mcContainer) return;
       isDrawing = true;
       this.ctx.beginPath();
     });
-    hammertime.on('panmove', (e) => {
+    mc.on('panmove', (e) => {
+      if (e.target !== mcContainer) return;
       if (isDrawing) {
         this.ctx.lineTo(e.center.x-left, e.center.y-top);
         this.ctx.stroke();
       }
     });
-    hammertime.on('panend', () => {
+    mc.on('panend', (e) => {
+      if (e.target !== mcContainer) return;
       isDrawing = false;
     });
   }

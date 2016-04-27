@@ -2,7 +2,7 @@
   <div id="note">
     <canvas id="lc"></canvas>
     <div id="sketch-function">
-        <button @click="save()">save</button>
+        <button @click="send()">send</button>
         <button @click="toBoard()">dashboard</button>
     </div>
   </div>
@@ -30,7 +30,7 @@ export default {
     }
   },
   methods: {
-    save: function() {
+    send: function() {
       let note = {
         id: genUUID(),
         x: 0,

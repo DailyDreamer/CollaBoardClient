@@ -1,20 +1,20 @@
 <template>
   <div id="board">
     <div id="board-zoom">
-      <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate[0] + 'px, ' + translate[1] + 'px)'}">
+      <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate.x + 'px, ' + translate.y + 'px)', 'transform-origin': origin.x+'px '+origin.y+'px'}">
         <template v-for="note of notes">
           <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
             <component :is="'show-'+note.type" :note="note"></component>
           </div>
         </template>
-        <svg :width="config.BoardWidth" :height="config.BoardHeight">
-          <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height"></rect-mask>
+        <svg id="svg-container" :width="config.BoardWidth" :height="config.BoardHeight">
+          <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height" @changenote="changenote"></rect-mask>
         </svg>
-        <add-note :show.sync="isAddingNote"></add-note>
+        <add-note :show.sync="isAddingNote" :pos="tapPos"></add-note>
+        <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
     </div>
     <div id="board-function">
-      <button @click="isAddingNote=true">Add note</button>
       <button @click="toNote()">add sketch</button>
     </div>
   </div>
@@ -26,6 +26,7 @@ import Hammer from 'hammerjs'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
 import AddNote from './AddNote.vue'
+import ChangeNote from './ChangeNote.vue'
 import ShowText from './ShowText.vue'
 import ShowSketch from './ShowSketch.vue'
 import {
@@ -38,6 +39,7 @@ export default {
   components: {
     'rect-mask': RectMask,
     'add-note': AddNote,
+    'change-note': ChangeNote,
     'show-text': ShowText,
     'show-sketch': ShowSketch,
   },
@@ -56,13 +58,23 @@ export default {
     return {
       config: config,
       scale: 1,
-      translate: [0, 0],
+      translate: { x:0, y:0 },
+      origin: { x:0, y:0 },
       isAddingNote: false,
+      tapPos: { x:0, y:0 },
+      isChangingNote: false,
+      changingNote: null,
     }
   },
   methods: {
     toNote: function() {
       this.$route.router.go({ name: 'sketch', params: { rid: this.$route.params.rid }});
+    },
+    changenote: function(note) {
+      this.isAddingNote = false;
+      this.changingNote = note;
+      console.log(note);
+      this.isChangingNote = true;
     },
   },
   ready() {
@@ -93,21 +105,45 @@ export default {
         .attr("x2", config.BoardWidth)
         .attr("y2", function(d) { return d; });
 
-    //zoom and panning behavior
-    let zoom = d3.behavior.zoom()
-      .scaleExtent([0.1, 5])
-      .on("zoom", () => {
-        this.scale = d3.event.scale;
-        this.translate = d3.event.translate;
-      });
-    d3.select('#board-zoom').call(zoom)
-      .on("dblclick.zoom", null);
-
-    let mc = new Hammer.Manager(document.getElementById('board-content'));
-    mc.add(new Hammer.Tap({ event: 'dbtap', taps: 2 }));
+    let mcContainer = document.getElementById('svg-container');
+    let mc = new Hammer.Manager(mcContainer);
+    let tap = new Hammer.Tap();
+    let dbtap = new Hammer.Tap({ event: 'dbtap', taps: 2 });
+    dbtap.recognizeWith(tap);
+    tap.requireFailure(dbtap);
+    let pan = new Hammer.Pan();
+    let pinch = new Hammer.Pinch();
+    mc.add([dbtap, tap, pan, pinch]);
+    //double tap add note
     mc.on("dbtap", e => {
-      console.log('dbtap2');
-      console.log(e);
+      if (e.target !== mcContainer) return;
+      this.isChangingNote = false;
+      this.tapPos.x = e.center.x;
+      this.tapPos.y = e.center.y;
+      this.isAddingNote = true;
+    });
+    mc.on('tap', e => {
+      this.isAddingNote = false;
+      this.isChangingNote = false;
+    });
+    //pan
+    let last = { x:0, y:0 };
+    mc.on('panmove', (e) => {
+      if (e.target !== mcContainer) return;
+      this.translate.x = last.x + e.deltaX;
+      this.translate.y = last.y + e.deltaY;
+    });
+    mc.on('panend', (e) => {
+      if (e.target !== mcContainer) return;
+      last.x = this.translate.x;
+      last.y = this.translate.y;
+    });
+
+    //pinch to zoom
+    mc.on('pinch', (e) => {
+      this.scale = e.scale;
+      this.origin.x = e.center.x;
+      this.origin.y = e.center.y;
     });
   }
 }
@@ -144,7 +180,7 @@ svg {
   stroke: #ddd;
 }
 rect {
-  opacity: 0.1;
+  opacity: 0;
   cursor: move;
 }
 .note {
@@ -160,8 +196,6 @@ rect {
 }
 #add {
   position: absolute;
-  top: 400px;
-  left: 400px;
   width: 400px;
   height: 400px;
 

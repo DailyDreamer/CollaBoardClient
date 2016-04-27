@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import d3 from 'd3'
 import Hammer from 'hammerjs'
 import config from '../config.json'
 import {
@@ -31,34 +30,28 @@ export default {
 
   },
   ready() {
-    //drag behavior
-    let rect = d3.select(this.$el);
-    let originX, originY, tmpX, tmpY;
-    let drag = d3.behavior.drag()
-      .origin(() => {
-        return {x: this.note.x, y: this.note.y};
-      })
-      .on("dragstart", () => {
-        d3.event.sourceEvent.stopPropagation();
-        rect.classed("dragging", true);
-        originX = this.note.x;
-        originY = this.note.y;
-      })
-      .on("drag", () => {
-        tmpX = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (d3.event.x - originX) / this.scale)));
-        tmpY = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (d3.event.y - originY) / this.scale)));
-        this.notifyStyleChange({ id: this.note.id, x:tmpX, y:tmpY });
-      })
-      .on('dragend', () => {
-        rect.classed("dragging", false);
-      });
-    rect.call(drag);
-
-    let mc = new Hammer.Manager(this.$el);
-    mc.add(new Hammer.Tap({ event: 'dbtap', taps: 2 }));
+    let mcContainer = this.$el;
+    let mc = new Hammer.Manager(mcContainer);
+    let dbtap = new Hammer.Tap({ event: 'dbtap', taps: 2 });
+    let pan = new Hammer.Pan();
+    mc.add([dbtap, pan]);
     mc.on("dbtap", e => {
-      console.log('dbtap1');
-      console.log(e);
+      if (e.target !== mcContainer) return;
+      this.$dispatch('changenote', this.note);
+    });
+    let ox, oy;
+    mc.on('panstart', (e) => {
+      if (e.target !== mcContainer) return;
+      originX = this.note.x;
+      originY = this.note.y;
+      ox = e.center.x;
+      oy = e.center.y;
+    });
+    mc.on('panmove', (e) => {
+      if (e.target !== mcContainer) return;
+      tmpX = (Math.max(0, Math.min(config.BoardWidth - config.NoteWidth,  originX + (e.center.x - ox) / this.scale)));
+      tmpY = (Math.max(0, Math.min(config.BoardHeight - config.NoteHeight,  originY + (e.center.y - oy) / this.scale)));
+      this.notifyStyleChange({ id: this.note.id, x:tmpX, y:tmpY });
     });
   }
 }
