@@ -44,11 +44,9 @@ export default {
     let pan = new Hammer.Pan();
     mc.add([dbtap, tap, pan]);
     mc.on("dbtap", e => {
-      if (e.target !== mcContainer) return;
       this.$dispatch('changenote', this.note);
     });
     mc.on('tap', e => {
-      if (e.target !== mcContainer) return;
       if (!this.source) {
         this.setSource(this.note.id);
       } else if (this.source !== this.note.id) {

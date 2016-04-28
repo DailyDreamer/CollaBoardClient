@@ -23,7 +23,7 @@ export default {
       this.notifyAdd(this.note);
     },
     'change': function() {
-      this.notifyContentChange(this.note);
+      this.notifyContentChange({ id:this.note.id, content:this.note.content });
     },
   },
 }

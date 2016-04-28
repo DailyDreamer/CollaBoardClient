@@ -1,9 +1,9 @@
 <template>
   <div id="Login">
-    <form class="" @submit.prevent="login">
-      <input type="text" placeholder="name" v-model="user._id">
-      <input type="password" v-model="user.password">
-      <button type="submit">Login</button>
+    <form class="pure-form pure-form-stacked" @submit.prevent="login">
+      <input type="text" placeholder="username" v-model="user._id">
+      <input type="password" placeholder="password" v-model="user.password">
+      <button class="pure-button" type="submit">Login</button>
     </form>
   </div>
 </template>

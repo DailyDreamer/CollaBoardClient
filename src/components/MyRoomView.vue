@@ -1,11 +1,17 @@
 <template>
-  <input type="text" v-model="rname" placeholder="Room name">
-  <button v-on:click="newRoom()">New Room</button>
-  <ul>
-    <li v-for="room in rooms">
-      <a v-link="{name: this.device, params: {rid: room.rid} }">{{room.rname}}</a>
-    </li>
-  </ul>
+  <div class="pure-menu">
+    <span class="pure-menu-heading">My Rooms</span>
+
+    <ul class="pure-menu-list">
+      <li class="pure-menu-item" v-for="room in rooms">
+        <a class="pure-menu-link" v-link="{name: this.device, params: {rid: room.rid} }">{{room.rname}}</a>
+      </li>
+    </ul>
+  </div>
+  <form class="pure-form">
+    <input type="text" v-model="rname" placeholder="set a name">
+    <button class="pure-button" v-on:click="newRoom">New Room</button>
+  </form>
 </template>
 
 <script>

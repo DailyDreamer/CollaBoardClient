@@ -6,7 +6,7 @@
             <line v-for="n in config.BoardWidth / 100" :x1="n*100" :y1="0" :x2="n*100" :y2="config.BoardWidth" />
             <line v-for="n in config.BoardHeight / 100" :x1="0" :y1="n*100" :x2="config.BoardHeight" :y2="n*100" />
           </g>
-          <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black"/>
+          <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black" @click="deleteLink(link)"/>
         </svg>
         <template v-for="note of notes">
           <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px', transform: 'scale(' + note.scale + ')' }">
@@ -38,6 +38,7 @@ import {
   socketListen,
   notesInit,
   setSource,
+  notifyDeleteLink,
 } from '../vuex/actions'
 
 export default {
@@ -58,6 +59,7 @@ export default {
       socketListen,
       notesInit,
       setSource,
+      notifyDeleteLink,
     }
   },
   data() {
@@ -83,6 +85,10 @@ export default {
       this.isAddingNote = false;
       this.changingNote = note;
       this.isChangingNote = true;
+    },
+    deleteLink: function(link) {
+      console.log('delete');
+      this.notifyDeleteLink(link);
     },
   },
   ready() {

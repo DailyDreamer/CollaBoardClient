@@ -3,6 +3,7 @@
     <component :is="'change-'+ note.type" :note="copyNote()" @close="show=false"></component>
     <button @click="changeNote">change</button>
     <button @click="show=false">cancel</button>
+    <button @click="deleteNote">delete</button>
   </div>
 </template>
 
@@ -10,19 +11,23 @@
 import config from '../config.json'
 import AddText from './AddText.vue'
 import AddSketch from './AddSketch.vue'
+import {
+  notifyDelete,
+} from '../vuex/actions'
 
 export default {
   components: {
     'change-text': AddText,
     'change-sketch': AddSketch,
   },
+  vuex: {
+    actions: {
+      notifyDelete,
+    }
+  },
   props: {
     show: Boolean,
     note: Object,
-  },
-  data() {
-    return {
-    }
   },
   methods: {
     copyNote: function() {
@@ -32,9 +37,11 @@ export default {
       this.$broadcast('change');
       this.show = false;
     },
+    deleteNote: function() {
+      this.notifyDelete(this.note.id);
+      this.show = false;
+    },
   },
-  ready() {
-  }
 }
 </script>
 

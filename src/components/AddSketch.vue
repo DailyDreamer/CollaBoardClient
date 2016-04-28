@@ -34,7 +34,7 @@ export default {
     },
     'change': function() {
       this.note.content = this.sketch.toDataURL();
-      this.notifyContentChange(this.note);
+      this.notifyContentChange({ id:this.note.id, content:this.note.content });
     },
   },
   ready() {
