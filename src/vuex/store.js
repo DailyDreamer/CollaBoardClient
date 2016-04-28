@@ -5,8 +5,10 @@ import config from '../config.json'
 Vue.use(Vuex)
 
 const state = {
-  notes : {},
+  notes: {},
+  links: [],
   socket: null,
+  source: null, //for link
 }
 
 const mutations = {
@@ -15,8 +17,9 @@ const mutations = {
     state.socket.emit('join', rid);
   },
 
-  NOTES_INIT (state, notes) {
+  NOTES_INIT (state, notes, links) {
     state.notes = notes;
+    state.links = links;
   },
 
   ADD (state, note) {
@@ -32,6 +35,27 @@ const mutations = {
 
   CONTENT_CHANGE (state, content) {
     state.notes[content.id].content = content.content;
+  },
+
+  SET_SOURCE (state, source) {
+    if (source) {
+      state.notes[source].scale = 1.1;
+    } else if (state.source){
+      //source = null
+      state.notes[state.source].scale = 1;
+    }
+    state.source = source;
+  },
+
+  ADD_LINK (state, link) {
+    state.links.push(link);
+  },
+
+  CLEAR_SOURCE (state) {
+    if (state.source) {
+      state.notes[state.source].scale = 1;
+      state.source = null;
+    }
   },
 }
 

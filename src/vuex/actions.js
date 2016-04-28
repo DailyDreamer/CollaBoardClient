@@ -13,6 +13,10 @@ export const socketListen = ({ dispatch, state }) => {
     let content = JSON.parse(msg);
     dispatch('CONTENT_CHANGE', content);
   });
+  state.socket.on('ADD_LINK', msg => {
+    let link = JSON.parse(msg);
+    dispatch('ADD_LINK', link);
+  });
 }
 
 export const notesInit = ({ dispatch }) => {
@@ -22,10 +26,12 @@ export const notesInit = ({ dispatch }) => {
     y: 0,
     width: 200,
     height: 250,
+    scale: 1,
     type: 'text',
     content: 'This is a test',
   }, };
-  dispatch('NOTES_INIT', notes);
+  let links = [];
+  dispatch('NOTES_INIT', notes, links);
 }
 export const notifyAdd = ({ dispatch, state }, note) => {
   state.socket.emit('ADD', JSON.stringify(note));
@@ -38,4 +44,12 @@ export const notifyStyleChange = ({ dispatch, state }, style) => {
 export const notifyContentChange = ({ dispatch, state }, content) => {
   state.socket.emit('CONTENT_CHANGE', JSON.stringify(content));
   dispatch('CONTENT_CHANGE', content);
+}
+
+export const setSource = ({ dispatch }, source) => dispatch('SET_SOURCE', source)
+export const notifyAddLink = ({ dispatch, state }, target) => {
+  let link = { source: state.source, target: target };
+  state.socket.emit('ADD_LINK', JSON.stringify(link));
+  dispatch('ADD_LINK', link);
+  dispatch('CLEAR_SOURCE');
 }

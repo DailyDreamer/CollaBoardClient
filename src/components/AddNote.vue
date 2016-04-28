@@ -45,6 +45,7 @@ export default {
         y: this.pos.y,
         width: config.NoteWidth,
         height: config.NoteHeight,
+        scale: 1,
         type: type,
         content: null,
       };

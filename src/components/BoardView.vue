@@ -1,19 +1,20 @@
 <template>
   <div id="board">
-    <div id="board-zoom">
       <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate.x + 'px, ' + translate.y + 'px)', 'transform-origin': origin.x+'px '+origin.y+'px'}">
+        <svg :width="config.BoardWidth" :height="config.BoardHeight">
+          <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black"/>
+        </svg>
         <template v-for="note of notes">
-          <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px' }">
+          <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px', transform: 'scale(' + note.scale + ')' }">
             <component :is="'show-'+note.type" :note="note"></component>
           </div>
         </template>
         <svg id="svg-container" :width="config.BoardWidth" :height="config.BoardHeight">
-          <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height" @changenote="changenote"></rect-mask>
+          <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height" :transform="'scale(' + note.scale + ')'" @changenote="changenote"></rect-mask>
         </svg>
         <add-note :show.sync="isAddingNote" :pos="addingNotePos"></add-note>
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
-    </div>
     <div id="board-function">
       <button @click="toNote()">add sketch</button>
     </div>
@@ -33,6 +34,7 @@ import {
   socketInit,
   socketListen,
   notesInit,
+  setSource,
 } from '../vuex/actions'
 
 export default {
@@ -45,23 +47,27 @@ export default {
   },
   vuex: {
     getters: {
-      socket: state => state.socket,
       notes: state => state.notes,
+      links: state => state.links,
     },
     actions: {
       socketInit,
       socketListen,
       notesInit,
+      setSource,
     }
   },
   data() {
     return {
       config: config,
+      //for pan and zoom
       scale: 1,
       translate: { x:0, y:0 },
       origin: { x:0, y:0 },
+      //for adding note
       isAddingNote: false,
       addingNotePos: { x:0, y:0 },
+      //for changing note
       isChangingNote: false,
       changingNote: null,
     }
@@ -117,13 +123,15 @@ export default {
     mc.on("dbtap", e => {
       if (e.target !== mcContainer) return;
       this.isChangingNote = false;
-      this.addingNotePos.x = e.center.x;
-      this.addingNotePos.y = e.center.y;
+      this.addingNotePos.x = e.center.x - this.translate.x;
+      this.addingNotePos.y = e.center.y - this.translate.y;
       this.isAddingNote = true;
     });
     mc.on('tap', e => {
+      if (e.target !== mcContainer) return;
       this.isAddingNote = false;
       this.isChangingNote = false;
+      this.setSource(null);
     });
     //pan
     let last = { x:0, y:0 };
@@ -191,6 +199,9 @@ rect {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
+  -webkit-transform-origin: 0 0;
+     -moz-transform-origin: 0 0;
+          transform-origin: 0 0;
 }
 .addchange {
   position: absolute;
