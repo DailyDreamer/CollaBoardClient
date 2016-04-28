@@ -2,8 +2,8 @@
   <div id="note">
     <canvas id="lc"></canvas>
     <div id="sketch-function">
-        <button @click="send()">send</button>
-        <button @click="toBoard()">dashboard</button>
+        <button class="pure-button" @click="send()">send</button>
+        <button class="pure-button" @click="toBoard()">dashboard</button>
     </div>
   </div>
 </template>

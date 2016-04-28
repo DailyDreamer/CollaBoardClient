@@ -1,7 +1,11 @@
 <template>
-  <div style="display:block">
-    <input type="file" @change="addImage($event)">
-  </div>
+  <form class="pure-form">
+    <label for="addimage">
+      <i class="material-icons">file_upload</i>
+      upload
+    </label>
+    <input type="file" id="addimage" @change="addImage($event)">
+  </form>
 </template>
 
 <script>
@@ -36,4 +40,12 @@ export default {
 </script>
 
 <style>
+input[type=file] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
 </style>

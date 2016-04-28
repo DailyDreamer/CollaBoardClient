@@ -2,6 +2,10 @@
   <div id="board">
       <div id="board-content" :style="{ width: config.BoardWidth + 'px', height: config.BoardHeight + 'px', transform: 'scale(' + scale + ') translate(' + translate.x + 'px, ' + translate.y + 'px)', 'transform-origin': origin.x+'px '+origin.y+'px'}">
         <svg :width="config.BoardWidth" :height="config.BoardHeight">
+          <g class="axis">
+            <line v-for="n in config.BoardWidth / 100" :x1="n*100" :y1="0" :x2="n*100" :y2="config.BoardWidth" />
+            <line v-for="n in config.BoardHeight / 100" :x1="0" :y1="n*100" :x2="config.BoardHeight" :y2="n*100" />
+          </g>
           <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black"/>
         </svg>
         <template v-for="note of notes">
@@ -16,13 +20,12 @@
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
     <div id="board-function">
-      <button @click="toNote()">add sketch</button>
+      <button class="pure-button" @click="toNote()">add sketch</button>
     </div>
   </div>
 </template>
 
 <script>
-import d3 from 'd3'
 import Hammer from 'hammerjs'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
@@ -88,28 +91,6 @@ export default {
     this.socketInit(this.$route.params.rid);
     this.socketListen();
 
-    //generate axis
-    let svg = d3.select('svg');
-    svg.append("g")
-        .attr("class", "x axis")
-      .selectAll("line")
-        .data(d3.range(0, config.BoardWidth, 100))
-      .enter().append("line")
-        .attr("x1", function(d) { return d; })
-        .attr("y1", 0)
-        .attr("x2", function(d) { return d; })
-        .attr("y2", config.BoardHeight);
-
-    svg.append("g")
-        .attr("class", "y axis")
-      .selectAll("line")
-        .data(d3.range(0, config.BoardHeight, 100))
-      .enter().append("line")
-        .attr("x1", 0)
-        .attr("y1", function(d) { return d; })
-        .attr("x2", config.BoardWidth)
-        .attr("y2", function(d) { return d; });
-
     let mcContainer = document.getElementById('svg-container');
     let mc = new Hammer.Manager(mcContainer);
     let tap = new Hammer.Tap();
@@ -161,11 +142,6 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-#board-zoom {
-  position: absolute;
-  width: 100%;
-  height: 100%;
 }
 #board-content {
   position: absolute;
