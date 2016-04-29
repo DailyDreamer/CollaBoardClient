@@ -6,7 +6,7 @@
             <line v-for="n in config.BoardWidth / 100" :x1="n*100" :y1="0" :x2="n*100" :y2="config.BoardWidth" />
             <line v-for="n in config.BoardHeight / 100" :x1="0" :y1="n*100" :x2="config.BoardHeight" :y2="n*100" />
           </g>
-          <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black" @click="deleteLink(link)"/>
+          <line v-for="link of links" :x1="notes[link.source].x+config.NoteWidth/2" :y1="notes[link.source].y+config.NoteHeight/2" :x2="notes[link.target].x+config.NoteWidth/2" :y2="notes[link.target].y+config.NoteHeight/2" stroke="black"></line>
         </svg>
         <template v-for="note of notes">
           <div class="note" :style="{ left: note.x + 'px', top: note.y + 'px', width: note.width + 'px', height: note.height + 'px', transform: 'scale(' + note.scale + ')' }">
@@ -15,6 +15,7 @@
         </template>
         <svg id="svg-container" :width="config.BoardWidth" :height="config.BoardHeight">
           <rect-mask v-for="note of notes" :note="note" :scale="scale" :x="note.x" :y="note.y", :width="note.width" :height="note.height" :transform="'scale(' + note.scale + ')'" @changenote="changenote"></rect-mask>
+          <cancel v-for="link of links" :pos="{ x: (notes[link.source].x+notes[link.target].x+config.NoteWidth-25)/2, y: (notes[link.source].y+notes[link.target].y+config.NoteHeight-25)/2 }" :link="link"></cencel>
         </svg>
         <add-note :show.sync="isAddingNote" :pos="addingNotePos"></add-note>
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
@@ -29,6 +30,7 @@
 import Hammer from 'hammerjs'
 import config from '../config.json'
 import RectMask from './RectMask.vue'
+import Cancel from './Cancel.vue'
 import AddNote from './AddNote.vue'
 import ChangeNote from './ChangeNote.vue'
 import ShowText from './ShowText.vue'
@@ -44,6 +46,7 @@ import {
 export default {
   components: {
     'rect-mask': RectMask,
+    'cancel': Cancel,
     'add-note': AddNote,
     'change-note': ChangeNote,
     'show-text': ShowText,

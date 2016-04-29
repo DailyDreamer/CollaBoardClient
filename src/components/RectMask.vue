@@ -26,14 +26,6 @@ export default {
     note: Object,
     scale: Number,
   },
-  data() {
-    return {
-
-    }
-  },
-  methods: {
-
-  },
   ready() {
     let mcContainer = this.$el;
     let mc = new Hammer.Manager(mcContainer);
