@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     login: function() {
-      this.$http.post(`http://${config.server}/api/login`, this.user).then( (res) => {
+      this.$http.post(`${config.server}/api/login`, this.user).then( (res) => {
         if (res.data.err) {
           console.log(res.data.err);
         } else {

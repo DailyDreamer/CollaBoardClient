@@ -1,5 +1,5 @@
 {
-  "server" : "localhost:3000",
+  "server" : "http://localhost:3000",
   "BoardWidth": 3000,
   "BoardHeight": 1500,
   "NoteWidth": 200,

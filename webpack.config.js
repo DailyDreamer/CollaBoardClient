@@ -1,12 +1,12 @@
 var path = require('path')
 var webpack = require('webpack')
-require('es6-promise').polyfill()
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/main.js',
   output: {
     path: path.join(__dirname, 'dist'),
-    publicPath: '/dist/',
+    publicPath: '',
     filename: 'build.js'
   },
   resolveLoader: {
@@ -43,10 +43,14 @@ module.exports = {
       },
     ]
   },
-  externals: {
-
-  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html'
+    })
+  ],
   devServer: {
+    contentBase: "./dist",
     historyApiFallback: true,
     noInfo: true
   }

@@ -37,6 +37,7 @@ export default {
         y: 0,
         width: config.NoteWidth,
         height: config.NoteHeight,
+        scale: 1,
         type: 'sketch',
         content: this.sketch.toDataURL(),
       };
