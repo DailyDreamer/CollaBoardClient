@@ -4,6 +4,7 @@
       <input type="text" placeholder="username" v-model="user._id">
       <input type="password" placeholder="password" v-model="user.password">
       <button class="pure-button" type="submit">Login</button>
+      <button class="pure-button" @click="toSignup">Signup</button>
     </form>
   </div>
 </template>
@@ -26,7 +27,10 @@ export default {
           this.$route.router.go({ name: 'index' });
         }
       });
-    }
+    },
+    toSignup: function() {
+      this.$route.router.go({ name: 'signup' });
+    },
   }
 }
 </script>
