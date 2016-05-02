@@ -18,8 +18,8 @@ const mutations = {
   },
 
   NOTES_INIT (state, notes, links) {
-    state.notes = notes;
-    state.links = links;
+    state.notes = { ...notes };
+    state.links = { ...links };
   },
 
   ADD (state, note) {
@@ -47,6 +47,15 @@ const mutations = {
     state.notes = { ... state.notes };
   },
 
+  ADD_LINK (state, link) {
+    state.links = { ...state.links,  [link.source+':'+link.target]: link };
+  },
+
+  DELETE_LINK (state, id) {
+    delete state.links[id];
+    state.links = { ...state.links };
+  },
+
   SET_SOURCE (state, source) {
     if (source) {
       state.notes[source].scale = 1.1;
@@ -57,20 +66,11 @@ const mutations = {
     state.source = source;
   },
 
-  ADD_LINK (state, link) {
-    state.links = { ...state.links,  [link.source+':'+link.target]: link };
-  },
-
   CLEAR_SOURCE (state) {
     if (state.source) {
       state.notes[state.source].scale = 1;
       state.source = null;
     }
-  },
-
-  DELETE_LINK (state, id) {
-    delete state.links[id];
-    state.links = { ...state.links };
   },
 }
 

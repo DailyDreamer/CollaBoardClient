@@ -27,18 +27,7 @@ export const socketListen = ({ dispatch, state }) => {
   });
 }
 
-export const notesInit = ({ dispatch }) => {
-  let notes = {'1':{
-    id: '1',
-    x: 0,
-    y: 0,
-    width: 200,
-    height: 250,
-    scale: 1,
-    type: 'text',
-    content: 'This is a test',
-  }, };
-  let links = {};
+export const notesInit = ({ dispatch }, notes, links) => {
   dispatch('NOTES_INIT', notes, links);
 }
 export const notifyAdd = ({ dispatch, state }, note) => {
