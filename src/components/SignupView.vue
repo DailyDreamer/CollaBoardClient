@@ -1,10 +1,10 @@
 <template>
   <div id="SignUp">
-    <form class="pure-form pure-form-stacked" @submit.prevent="signup">
+    <form class="pure-form pure-form-stacked">
       <input type="text" placeholder="username" v-model="user._id">
       <input type="password" placeholder="password" v-model="user.password">
-      <button class="pure-button" type="submit">SignUp</button>
     </form>
+    <button class="pure-button" @click="signup">SignUp</button>
   </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
         if (res.data.err) {
           console.log(res.data.err);
         } else {
+          console.log(res.data.success);
           this.$route.router.go({ name: 'login' });
         }
       });
