@@ -1,6 +1,6 @@
 <template>
   <div id="SignUp">
-    <form class="pure-form pure-form-stacked" @submit.prevent="signUp">
+    <form class="pure-form pure-form-stacked" @submit.prevent="signup">
       <input type="text" placeholder="username" v-model="user._id">
       <input type="password" placeholder="password" v-model="user.password">
       <button class="pure-button" type="submit">SignUp</button>
@@ -18,7 +18,7 @@ export default {
     }
   },
   methods: {
-    signUp: function() {
+    signup: function() {
       this.$http.post(`${config.server}/api/signup`, this.user).then( (res) => {
         if (res.data.err) {
           console.log(res.data.err);
