@@ -21,7 +21,7 @@
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
     <div id="board-function">
-      <button class="pure-button" @click="toNote()">add sketch</button>
+      <button class="pure-button" @click="toSketch()">add sketch</button>
     </div>
   </div>
 </template>
@@ -81,7 +81,7 @@ export default {
     }
   },
   methods: {
-    toNote: function() {
+    toSketch: function() {
       this.$route.router.go({ name: 'sketch', params: { rid: this.$route.params.rid }});
     },
     changenote: function(note) {

@@ -8,17 +8,6 @@ export default {
   props: {
     note: Object,
   },
-  data() {
-    return {
-
-    }
-  },
-  methods: {
-
-  },
-  ready() {
-
-  }
 }
 </script>
 
