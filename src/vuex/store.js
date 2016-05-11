@@ -38,6 +38,7 @@ const mutations = {
   },
 
   DELETE (state, id) {
+    if (state.source === id) state.source = null;
     for (let k of Object.keys(state.links)){
       if (state.links[k].source === id || state.links[k].target === id)
         delete state.links[k];

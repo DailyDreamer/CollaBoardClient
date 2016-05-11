@@ -1,7 +1,7 @@
 <template>
   <div id="note">
     <canvas id="lc"></canvas>
-    <div id="sketch-function">
+    <div class="sketch-function">
         <button class="pure-button" @click="send">send</button>
         <button class="pure-button" @click="toBoard">dashboard</button>
     </div>
@@ -62,7 +62,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-#sketch-function {
+.sketch-function {
   position: fixed;
   bottom: 0;
   right: 0;

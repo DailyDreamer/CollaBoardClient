@@ -20,7 +20,7 @@
         <add-note :show.sync="isAddingNote" :pos="addingNotePos"></add-note>
         <change-note :show.sync="isChangingNote" :note="changingNote"></change-note>
       </div>
-    <div id="board-function">
+    <div class="board-function">
       <button class="pure-button" @click="toSketch()">add sketch</button>
     </div>
   </div>
@@ -164,7 +164,7 @@ export default {
      -moz-transform-origin: 0 0;
           transform-origin: 0 0;
 }
-#board-function {
+.board-function {
   position: fixed;
   bottom: 0;
   right: 0;
@@ -198,5 +198,13 @@ rect {
   position: absolute;
   width: 400px;
   height: 400px;
+}
+.flexright {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
 }
 </style>

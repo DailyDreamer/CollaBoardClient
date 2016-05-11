@@ -8,8 +8,10 @@
       </ul>
     </div>
     <component :is="'add-'+ type" :note="newNote()" @close="show=false"></component>
-    <button class="pure-button" @click="addNote">add</button>
-    <button class="pure-button" @click="show=false">cancel</button>
+    <div>
+      <button class="pure-button" @click="addNote"><i class="material-icons">done</i></button>
+      <button class="pure-button" @click="show=false"><i class="material-icons">cancel</i></button>
+    </div>
   </div>
 </template>
 
