@@ -2,8 +2,8 @@
   <div id="note">
     <canvas id="lc"></canvas>
     <div id="sketch-function">
-        <button class="pure-button" @click="send()">send</button>
-        <button class="pure-button" @click="toBoard()">dashboard</button>
+        <button class="pure-button" @click="send">send</button>
+        <button class="pure-button" @click="toBoard">dashboard</button>
     </div>
   </div>
 </template>
@@ -49,10 +49,7 @@ export default {
     }
   },
   ready() {
-    this.socketInit();
-    let c = document.getElementById('lc');
-    c.height = window.innerHeight;
-    c.width = window.innerWidth;
+    this.socketInit(this.$route.params.rid);
     this.sketch = new Sketch('lc');
   }
 }
@@ -62,6 +59,8 @@ export default {
 #lc {
   position: absolute;
   background-color: grey;
+  width: 100%;
+  height: 100%;
 }
 #sketch-function {
   position: fixed;

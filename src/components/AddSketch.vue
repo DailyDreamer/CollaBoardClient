@@ -42,7 +42,7 @@ export default {
     let image = new Image();
     image.src = this.note.content;
     image.onload = () => {
-      this.sketch.drawImage(image, 0, 0);
+      this.sketch.drawImage(image, 0, 0, this.sketch.width, this.sketch.height);
     };
   }
 }
@@ -52,5 +52,9 @@ export default {
 #sc {
   display: block;
   background-color: grey;
+  height: auto;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
 }
 </style>

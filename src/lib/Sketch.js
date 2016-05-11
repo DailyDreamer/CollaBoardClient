@@ -11,6 +11,9 @@ class Sketch {
     let top = rect.top + window.pageYOffset;
     let isDrawing = false;
 
+    this.height = rect.height;
+    this.width = rect.width;
+
     let mcContainer = this.canvas;
     let mc = new Hammer.Manager(mcContainer);
     mc.add(new Hammer.Pan());
@@ -45,6 +48,22 @@ class Sketch {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.restore();
+  }
+
+  get height() {
+    return this.canvas.height;
+  }
+
+  set height(h) {
+    this.canvas.height = h;
+  }
+
+  get width() {
+    return this.canvas.width;
+  }
+
+  set width(w) {
+    this.canvas.width = w;
   }
 }
 
