@@ -1,5 +1,5 @@
 {
-  "server" : "http://localhost:8001",
+  "server" : "http://166.111.139.15:8001",
   "BoardWidth": 3000,
   "BoardHeight": 1500,
   "NoteWidth": 200,
